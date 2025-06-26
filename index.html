@@ -288,14 +288,44 @@
   </div>
 
   <script>
-    document.getElementById('travel-form').addEventListener('submit', function(event) {
-      event.preventDefault(); // Voorkomt standaard formulierinzending
+    const travelData = [
+      {
+        origin: 'Amsterdam',
+        destination: 'Barcelona',
+        options: [
+          { type: 'Vliegtuig', duration: '2u 15m', price: 85, co2PerPerson: 150, details: 'Vluchtnummer: KL1234, Vertrek: 10:00, Aankomst: 12:15' },
+          { type: 'Trein', duration: '6u 45m', price: 65, co2PerPerson: 25, details: 'Vertrek: 08:30 (Intercity), Overstap Parijs (Thalys), Aankomst: 15:15' },
+          { type: 'Auto', duration: '14u 0m', price: 120, co2PerPerson: 180, details: 'Routetips: Tanken in Luxemburg, Tol in Frankrijk' }
+        ]
+      },
+      {
+        origin: 'Amsterdam',
+        destination: 'Berlijn',
+        options: [
+          { type: 'Vliegtuig', duration: '1u 20m', price: 70, co2PerPerson: 100, details: 'Vluchtnummer: LH4567, Vertrek: 09:00, Aankomst: 10:20' },
+          { type: 'Trein', duration: '6u 0m', price: 50, co2PerPerson: 20, details: 'Vertrek: 07:00 (Intercity), Directe verbinding, Aankomst: 13:00' },
+          { type: 'Auto', duration: '6u 30m', price: 50, co2PerPerson: 100, details: 'Routetips: Snelweg A2, geen tol' }
+        ]
+      },
+      {
+        origin: 'Utrecht',
+        destination: 'Parijs',
+        options: [
+          { type: 'Trein', duration: '3u 20m', price: 35, co2PerPerson: 15, details: 'Vertrek: 11:00 (Thalys), Directe verbinding, Aankomst: 14:20' },
+          { type: 'Auto', duration: '4u 30m', price: 40, co2PerPerson: 70, details: 'Routetips: Tol op Franse snelwegen' }
+        ]
+      }
+      // Voeg hier meer routes toe op dezelfde manier
+    ];
 
-      const vertrek = document.getElementById('vertrek').value;
-      const bestemming = document.getElementById('bestemming').value;
+    document.getElementById('travel-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const vertrek = document.getElementById('vertrek').value.trim();
+      const bestemming = document.getElementById('bestemming').value.trim();
+      const aantalPersonen = parseInt(document.getElementById('aantal-personen').value, 10);
       const heenreisDatum = document.getElementById('heenreis-datum').value;
-      const terugreisDatum = document.getElementById('terugreis-datum').value;
-      const aantalPersonen = document.getElementById('aantal-personen').value;
+
 
       const resultsContainer = document.getElementById('results-container');
       const initialMessage = document.getElementById('initial-message');
@@ -306,50 +336,36 @@
 
       resultsContainer.innerHTML = '';
 
-      const mockResults = [
-        {
-          type: 'Vliegtuig',
-          route: `${vertrek} - ${bestemming} (Directe vlucht)`,
-          duration: '2u 15m',
-          price: `€ ${85 * aantalPersonen}`,
-          co2: `${150 * aantalPersonen} kg CO2`,
-          details: `Vluchtnummer: KL1234, Vertrek: 10:00, Aankomst: 12:15 (${heenreisDatum})`
-        },
-        {
-          type: 'Trein',
-          route: `${vertrek} - ${bestemming} (Via Parijs)`,
-          duration: '6u 45m',
-          price: `€ ${65 * aantalPersonen}`,
-          co2: `${25 * aantalPersonen} kg CO2`,
-          details: `Vertrek: 08:30 (Intercity), Overstap Parijs (Thalys), Aankomst: 15:15 (${heenreisDatum})`
-        },
-        {
-          type: 'Auto',
-          route: `${vertrek} - ${bestemming} (Via de weg)`,
-          duration: '14u 0m',
-          price: `€ ${120 * aantalPersonen} (Benzine + Tol)`,
-          co2: `${180 * aantalPersonen} kg CO2`,
-          details: `Routetips: Tanken in Luxemburg, Tol in Frankrijk (${heenreisDatum})`
-        }
-      ];
+      // Zoek naar de corresponderende reisdata
+      const foundRoute = travelData.find(route =>
+        route.origin.toLowerCase() === vertrek.toLowerCase() &&
+        route.destination.toLowerCase() === bestemming.toLowerCase()
+      );
 
-      mockResults.forEach(result => {
-        const card = document.createElement('div');
-        card.className = 'result-card';
-        card.innerHTML = `
-          <div class="icon">${getIcon(result.type)}</div>
-          <div class="details">
-            <h3>${result.type}: ${result.route}</h3>
-            <p>Duur: <strong>${result.duration}</strong></p>
-            <p>Details: ${result.details}</p>
-          </div>
-          <div class="metrics">
-            <div class="metric-item">Prijs: <strong>${result.price}</strong></div>
-            <div class="metric-item">CO2: <strong class="metric-co2">${result.co2}</strong></div>
-          </div>
-        `;
-        resultsContainer.appendChild(card);
-      });
+      if (foundRoute) {
+        foundRoute.options.forEach(option => {
+          const card = document.createElement('div');
+          card.className = 'result-card';
+          card.innerHTML = `
+            <div class="icon">${getIcon(option.type)}</div>
+            <div class="details">
+              <h3>${option.type}: ${option.route || `${foundRoute.origin} - ${foundRoute.destination}`}</h3>
+              <p>Duur: <strong>${option.duration}</strong></p>
+              <p>Prijs p.p.: € ${option.price}</p>
+              <p>Totaalprijs: <strong>€ ${option.price * aantalPersonen}</strong></p>
+              <p>Details: ${option.details} (op ${heenreisDatum})</p>
+            </div>
+            <div class="metrics">
+              <div class="metric-item">CO2 p.p.: ${option.co2PerPerson} kg CO2</div>
+              <div class="metric-item">Totaal CO2: <strong class="metric-co2">${option.co2PerPerson * aantalPersonen} kg CO2</strong></div>
+            </div>
+          `;
+          resultsContainer.appendChild(card);
+        });
+      } else {
+        resultsContainer.innerHTML = '<p class="no-results">Geen reisopties gevonden voor deze route. Probeer "Amsterdam" naar "Barcelona" of "Berlijn", of "Utrecht" naar "Parijs".</p>';
+      }
+
 
       function getIcon(type) {
         switch (type) {

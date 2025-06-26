@@ -208,6 +208,24 @@
       font-size: 1.1rem;
     }
 
+    .co2-disclaimer, .savings-container {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+    .savings-container {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    .savings-item {
+        margin-bottom: 5px;
+    }
+
+
     /* Media Queries voor responsiviteit */
     @media (max-width: 768px) {
       header h1 {
@@ -284,35 +302,46 @@
       <div id="results-container">
         <p class="no-results" id="initial-message">Voer hierboven je reis in om opties te vinden.</p>
       </div>
+      <div class="co2-disclaimer">
+        <p>De getoonde prijzen zijn indicatief en de CO2-uitstoot is gebaseerd op gemiddelde waarden per vervoermiddel in Europa (incl. opwekking van elektriciteit voor trein/elektrische auto's). </p>
+      </div>
+      <div id="savings-container" class="savings-container" style="display:none;">
+        <h3>Besparing ten opzichte van Vliegtuig:</h3>
+        <div id="savings-details"></div>
+      </div>
     </section>
   </div>
 
   <script>
+    // Conversiefactoren voor CO2-besparing (geschat)
+    const CO2_PER_WINE_GLASS = 0.25; // kg CO2e per glas wijn (productie, transport, fles)
+    const CO2_PER_STEAK = 8;      // kg CO2e per biefstuk (productie, transport, etc.)
+
     const travelData = [
       {
         origin: 'Amsterdam',
         destination: 'Barcelona',
         options: [
-          { type: 'Vliegtuig', duration: '2u 15m', price: 85, co2PerPerson: 150, details: 'Vluchtnummer: KL1234, Vertrek: 10:00, Aankomst: 12:15' },
-          { type: 'Trein', duration: '6u 45m', price: 65, co2PerPerson: 25, details: 'Vertrek: 08:30 (Intercity), Overstap Parijs (Thalys), Aankomst: 15:15' },
-          { type: 'Auto', duration: '14u 0m', price: 120, co2PerPerson: 180, details: 'Routetips: Tanken in Luxemburg, Tol in Frankrijk' }
+          { type: 'Vliegtuig', duration: '2u 15m', price: 120, co2PerPerson: 195, details: 'Vluchtnummer: KL1234, Vertrek: 10:00, Aankomst: 12:15' },
+          { type: 'Trein', duration: '6u 45m', price: 90, co2PerPerson: 38, details: 'Vertrek: 08:30 (Intercity), Overstap Parijs (Thalys), Aankomst: 15:15' },
+          { type: 'Auto', duration: '14u 0m', price: 150, co2PerCar: 225, details: 'Routetips: Tanken in Luxemburg, Tol in Frankrijk' } // co2PerCar voor totale uitstoot auto
         ]
       },
       {
         origin: 'Amsterdam',
         destination: 'Berlijn',
         options: [
-          { type: 'Vliegtuig', duration: '1u 20m', price: 70, co2PerPerson: 100, details: 'Vluchtnummer: LH4567, Vertrek: 09:00, Aankomst: 10:20' },
-          { type: 'Trein', duration: '6u 0m', price: 50, co2PerPerson: 20, details: 'Vertrek: 07:00 (Intercity), Directe verbinding, Aankomst: 13:00' },
-          { type: 'Auto', duration: '6u 30m', price: 50, co2PerPerson: 100, details: 'Routetips: Snelweg A2, geen tol' }
+          { type: 'Vliegtuig', duration: '1u 20m', price: 90, co2PerPerson: 78, details: 'Vluchtnummer: LH4567, Vertrek: 09:00, Aankomst: 10:20' },
+          { type: 'Trein', duration: '6u 0m', price: 70, co2PerPerson: 15, details: 'Vertrek: 07:00 (Intercity), Directe verbinding, Aankomst: 13:00' },
+          { type: 'Auto', duration: '6u 30m', price: 70, co2PerCar: 90, details: 'Routetips: Snelweg A2, geen tol' }
         ]
       },
       {
         origin: 'Utrecht',
         destination: 'Parijs',
         options: [
-          { type: 'Trein', duration: '3u 20m', price: 35, co2PerPerson: 15, details: 'Vertrek: 11:00 (Thalys), Directe verbinding, Aankomst: 14:20' },
-          { type: 'Auto', duration: '4u 30m', price: 40, co2PerPerson: 70, details: 'Routetips: Tol op Franse snelwegen' }
+          { type: 'Trein', duration: '3u 20m', price: 50, co2PerPerson: 13, details: 'Vertrek: 11:00 (Thalys), Directe verbinding, Aankomst: 14:20' },
+          { type: 'Auto', duration: '4u 30m', price: 60, co2PerCar: 75, details: 'Routetips: Tol op Franse snelwegen' }
         ]
       }
       // Voeg hier meer routes toe op dezelfde manier
@@ -326,24 +355,48 @@
       const aantalPersonen = parseInt(document.getElementById('aantal-personen').value, 10);
       const heenreisDatum = document.getElementById('heenreis-datum').value;
 
-
       const resultsContainer = document.getElementById('results-container');
       const initialMessage = document.getElementById('initial-message');
+      const savingsContainer = document.getElementById('savings-container');
+      const savingsDetails = document.getElementById('savings-details');
 
       if (initialMessage) {
         initialMessage.style.display = 'none';
       }
-
+      savingsContainer.style.display = 'none'; // Verberg besparingen totdat er resultaten zijn
       resultsContainer.innerHTML = '';
+      savingsDetails.innerHTML = '';
 
-      // Zoek naar de corresponderende reisdata
       const foundRoute = travelData.find(route =>
         route.origin.toLowerCase() === vertrek.toLowerCase() &&
         route.destination.toLowerCase() === bestemming.toLowerCase()
       );
 
+      let planeCo2Total = 0;
+      let hasPlaneOption = false;
+
       if (foundRoute) {
         foundRoute.options.forEach(option => {
+          let totalCo2;
+          let totalPrice;
+
+          if (option.type === 'Auto') {
+            totalCo2 = option.co2PerCar; // CO2 van de auto, ongeacht aantal personen
+            totalPrice = option.price; // Prijs van de auto, ongeacht aantal personen
+          } else {
+            totalCo2 = option.co2PerPerson * aantalPersonen;
+            totalPrice = option.price * aantalPersonen;
+          }
+
+          if (option.type === 'Vliegtuig') {
+            planeCo2Total = totalCo2;
+            hasPlaneOption = true;
+          }
+
+          // Bereken prijs per kg CO2 (voorkom delen door nul)
+          const pricePerCo2 = totalCo2 > 0 ? (totalPrice / totalCo2).toFixed(2) : 'N/A';
+
+
           const card = document.createElement('div');
           card.className = 'result-card';
           card.innerHTML = `
@@ -351,17 +404,51 @@
             <div class="details">
               <h3>${option.type}: ${option.route || `${foundRoute.origin} - ${foundRoute.destination}`}</h3>
               <p>Duur: <strong>${option.duration}</strong></p>
-              <p>Prijs p.p.: € ${option.price}</p>
-              <p>Totaalprijs: <strong>€ ${option.price * aantalPersonen}</strong></p>
+              <p>Prijs p.p.: ${option.type !== 'Auto' ? '€ ' + option.price : 'N.v.t.'}</p>
+              <p>Totaalprijs: <strong>€ ${totalPrice}</strong></p>
               <p>Details: ${option.details} (op ${heenreisDatum})</p>
             </div>
             <div class="metrics">
-              <div class="metric-item">CO2 p.p.: ${option.co2PerPerson} kg CO2</div>
-              <div class="metric-item">Totaal CO2: <strong class="metric-co2">${option.co2PerPerson * aantalPersonen} kg CO2</strong></div>
+              <div class="metric-item">CO2 p.p.: ${option.type !== 'Auto' ? option.co2PerPerson + ' kg CO2' : 'N.v.t.'}</div>
+              <div class="metric-item">Totaal CO2: <strong class="metric-co2">${totalCo2.toFixed(0)} kg CO2</strong></div>
+              <div class="metric-item">Prijs / kg CO2: <strong>€ ${pricePerCo2}</strong></div>
             </div>
           `;
           resultsContainer.appendChild(card);
         });
+
+        // Bereken en toon besparingen als er een vliegtuigoptie was
+        if (hasPlaneOption) {
+            foundRoute.options.forEach(option => {
+                if (option.type !== 'Vliegtuig') {
+                    let otherCo2Total;
+                    if (option.type === 'Auto') {
+                        otherCo2Total = option.co2PerCar;
+                    } else {
+                        otherCo2Total = option.co2PerPerson * aantalPersonen;
+                    }
+
+                    const co2Difference = planeCo2Total - otherCo2Total;
+
+                    if (co2Difference > 0) {
+                        const wineSavings = (co2Difference / CO2_PER_WINE_GLASS).toFixed(0);
+                        const steakSavings = (co2Difference / CO2_PER_STEAK).toFixed(1);
+                        
+                        savingsDetails.innerHTML += `
+                            <div class="savings-item">Als je kiest voor ${option.type} i.p.v. Vliegtuig, bespaar je ${co2Difference.toFixed(0)} kg CO2, wat gelijk staat aan ongeveer:</div>
+                            <div class="savings-item"><strong>${wineSavings} glazen wijn</strong></div>
+                            <div class="savings-item"><strong>${steakSavings} biefstukken</strong></div>
+                            <br>
+                        `;
+                    }
+                }
+            });
+            if (savingsDetails.innerHTML !== '') {
+                savingsContainer.style.display = 'block';
+            }
+        }
+
+
       } else {
         resultsContainer.innerHTML = '<p class="no-results">Geen reisopties gevonden voor deze route. Probeer "Amsterdam" naar "Barcelona" of "Berlijn", of "Utrecht" naar "Parijs".</p>';
       }

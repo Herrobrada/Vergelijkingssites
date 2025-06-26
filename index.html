@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reis Vergelijker - Vind jouw duurzame reis</title>
+  <link rel="icon" type="image/png" href="favicon.png"> 
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Professionelere kleuren */
+      --primary-color: #004085; /* Diepblauw */
+      --secondary-color: #007bff; /* Standaard blauw */
+      --accent-color-co2: #28a745; /* Groen voor CO2 */
+      --text-color: #343a40; /* Donkergrijs voor tekst */
+      --light-bg: #f8f9fa; /* Zeer lichte grijs */
+      --dark-bg: #e9ecef; /* Iets donkerdere grijs */
+      --card-bg: white;
+      --shadow: 0 4px 8px rgba(0,0,0,0.1);
+      --border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Rubik', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--light-bg), var(--dark-bg));
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      margin: 0;
+      font-weight: 800;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .search-section {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+
+    .search-section h2 {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 0.95rem;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="date"],
+    .form-group input[type="number"] {
+      width: calc(100% - 22px);
+      padding: 12px;
+      border: 1px solid #ced4da;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-family: 'Rubik', sans-serif;
+      color: var(--text-color);
+    }
+
+    .search-button {
+      padding: 12px 25px;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .search-button:hover {
+      background-color: var(--primary-color);
+    }
+
+    .results-section {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    .results-section h2 {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+
+    #results-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .result-card {
+      border: 1px solid #eee;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .result-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .result-card .icon {
+      font-size: 2.5rem;
+      color: var(--secondary-color);
+      flex-basis: 50px;
+      text-align: center;
+    }
+
+    .result-card .details {
+      flex: 3;
+      min-width: 250px;
+    }
+
+    .result-card .details h3 {
+      margin: 0 0 5px;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+    }
+
+    .result-card .details p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #6c757d;
+    }
+
+    .result-card .metrics {
+      flex: 1;
+      min-width: 120px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .metric-item {
+      margin-bottom: 5px;
+    }
+
+    .metric-item strong {
+      color: var(--secondary-color);
+    }
+
+    .metric-co2 {
+      color: var(--accent-color-co2);
+      font-weight: 800;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #777;
+      padding: 30px;
+      font-size: 1.1rem;
+    }
+
+    /* Media Queries voor responsiviteit */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      header p {
+        font-size: 1rem;
+      }
+      .search-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .form-group {
+        min-width: auto;
+        width: 100%;
+      }
+      .search-button {
+        width: 100%;
+      }
+      .result-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .result-card .icon {
+        margin-bottom: 10px;
+        flex-basis: auto;
+        width: 100%;
+        text-align: left;
+      }
+      .result-card .metrics {
+        text-align: left;
+        margin-top: 15px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Reis Vergelijker</h1>
+    <p>Vind de snelste, goedkoopste en meest duurzame reisoptie.</p>
+  </header>
+
+  <div class="container">
+    <section class="search-section">
+      <h2>Vind jouw reis</h2>
+      <form id="travel-form" class="search-form">
+        <div class="form-group">
+          <label for="vertrek">Vertrekpunt:</label>
+          <input type="text" id="vertrek" placeholder="Bijv. Amsterdam" required>
+        </div>
+        <div class="form-group">
+          <label for="bestemming">Bestemming:</label>
+          <input type="text" id="bestemming" placeholder="Bijv. Barcelona" required>
+        </div>
+        <div class="form-group">
+          <label for="heenreis-datum">Heenreis Datum:</label>
+          <input type="date" id="heenreis-datum" required>
+        </div>
+        <div class="form-group">
+          <label for="terugreis-datum">Terugreis Datum (optioneel):</label>
+          <input type="date" id="terugreis-datum">
+        </div>
+        <div class="form-group">
+          <label for="aantal-personen">Aantal personen:</label>
+          <input type="number" id="aantal-personen" value="1" min="1" required>
+        </div>
+        <button type="submit" class="search-button">Zoek reizen</button>
+      </form>
+    </section>
+
+    <section class="results-section">
+      <h2>Reisopties</h2>
+      <div id="results-container">
+        <p class="no-results" id="initial-message">Voer hierboven je reis in om opties te vinden.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    document.getElementById('travel-form').addEventListener('submit', function(event) {
+      event.preventDefault(); // Voorkomt standaard formulierinzending
+
+      const vertrek = document.getElementById('vertrek').value;
+      const bestemming = document.getElementById('bestemming').value;
+      const heenreisDatum = document.getElementById('heenreis-datum').value;
+      const terugreisDatum = document.getElementById('terugreis-datum').value;
+      const aantalPersonen = document.getElementById('aantal-personen').value;
+
+      const resultsContainer = document.getElementById('results-container');
+      const initialMessage = document.getElementById('initial-message');
+
+      if (initialMessage) {
+        initialMessage.style.display = 'none';
+      }
+
+      resultsContainer.innerHTML = '';
+
+      const mockResults = [
+        {
+          type: 'Vliegtuig',
+          route: `${vertrek} - ${bestemming} (Directe vlucht)`,
+          duration: '2u 15m',
+          price: `€ ${85 * aantalPersonen}`,
+          co2: `${150 * aantalPersonen} kg CO2`,
+          details: `Vluchtnummer: KL1234, Vertrek: 10:00, Aankomst: 12:15 (${heenreisDatum})`
+        },
+        {
+          type: 'Trein',
+          route: `${vertrek} - ${bestemming} (Via Parijs)`,
+          duration: '6u 45m',
+          price: `€ ${65 * aantalPersonen}`,
+          co2: `${25 * aantalPersonen} kg CO2`,
+          details: `Vertrek: 08:30 (Intercity), Overstap Parijs (Thalys), Aankomst: 15:15 (${heenreisDatum})`
+        },
+        {
+          type: 'Auto',
+          route: `${vertrek} - ${bestemming} (Via de weg)`,
+          duration: '14u 0m',
+          price: `€ ${120 * aantalPersonen} (Benzine + Tol)`,
+          co2: `${180 * aantalPersonen} kg CO2`,
+          details: `Routetips: Tanken in Luxemburg, Tol in Frankrijk (${heenreisDatum})`
+        }
+      ];
+
+      mockResults.forEach(result => {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML = `
+          <div class="icon">${getIcon(result.type)}</div>
+          <div class="details">
+            <h3>${result.type}: ${result.route}</h3>
+            <p>Duur: <strong>${result.duration}</strong></p>
+            <p>Details: ${result.details}</p>
+          </div>
+          <div class="metrics">
+            <div class="metric-item">Prijs: <strong>${result.price}</strong></div>
+            <div class="metric-item">CO2: <strong class="metric-co2">${result.co2}</strong></div>
+          </div>
+        `;
+        resultsContainer.appendChild(card);
+      });
+
+      function getIcon(type) {
+        switch (type) {
+          case 'Vliegtuig': return '✈️';
+          case 'Trein': return '🚆';
+          case 'Auto': return '🚗';
+          default: return '❓';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

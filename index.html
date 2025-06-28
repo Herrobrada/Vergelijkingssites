@@ -249,27 +249,15 @@
 let cityData = [];
 
 async function loadCities() {
-    try {
-        const response = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json");
-        cityData = response.data;
-        const names = [...new Set(cityData.map(c => c.name))].sort();
-        const datalist = document.getElementById("cities");
-        datalist.innerHTML = names.map(n => `<option value="${n}"></option>`).join("");
-    } catch (error) {
-        console.error("Fout bij het laden van steden:", error);
-        alert("Kan de stadsgegevens niet laden. Probeer later opnieuw.");
-    }
+    const response = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json");
+    cityData = response.data;
+    const names = [...new Set(cityData.map(c => c.name))].sort();
+    const datalist = document.getElementById("cities");
+    datalist.innerHTML = names.map(n => `<option value="${n}"></option>`).join("");
 }
 
 function getCity(name) {
-    // Gebruik Fuse.js voor fuzzy searching
-    const fuse = new Fuse(cityData, {
-        keys: ['name'],
-        threshold: 0.3, // Hoe toleranter de zoektocht is
-        ignoreLocation: true
-    });
-    const result = fuse.search(name);
-    return result.length > 0 ? result[0].item : null;
+    return cityData.find(c => c.name.toLowerCase() === name.toLowerCase());
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
@@ -286,7 +274,7 @@ function calculate() {
     const persons = parseInt(document.getElementById("persons").value);
 
     if (!from || !to || persons < 1) {
-        alert("Voer geldige steden en een geldig aantal personen in.");
+        alert("Voer geldige steden en aantal personen in.");
         return;
     }
 

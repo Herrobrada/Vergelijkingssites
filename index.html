@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+<style>
+  .styled-table a {
+    font-size: 0.85em;
+    color: #2A3C9A;
+    text-decoration: none;
+  }
+
+  .styled-table a:hover {
+    text-decoration: underline;
+  }
+</style>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>De Groene vergelijker</title>
+  <title>De Groene Reisvergelijker</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
   <style>
-      :root {
+    :root {
       --pricewise-dark-blue: #2A3C9A;
       --pricewise-light-bg: #F3F7FA;
       --pricewise-green-button: #90D304;
       --pricewise-green-button-hover: #7dbd03;
-      --pricewise-red-logo: #E4002B;
       --white: #ffffff;
       --text-color: #333333;
       --heading-color: #1a1a1a;
@@ -22,49 +32,40 @@
       --input-border-color: #dcdcdc;
     }
 
-    body {
-      font-family: 'Roboto', Arial, sans-serif;
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
       background-color: var(--pricewise-light-bg);
       color: var(--text-color);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
+  /* ✅ DIT HEB IK TOEGEVOEGD */
+  main > div:not(.form-container):not(.result-section):not(#spinner):not(.note) {
+    display: none;
+  }
 
     header {
       background-color: var(--pricewise-dark-blue);
       color: var(--white);
-      padding: 80px 20px;
+      padding: 60px 20px;
       text-align: center;
-      font-size: 2.8em;
+      font-size: 2.2em;
       font-weight: 700;
-      position: relative;
-      overflow: hidden;
-    }
-
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: -50px;
-      left: 0;
-      width: 100%;
-      height: 100px;
-      background: var(--pricewise-light-bg);
-      border-top-left-radius: 50% 100px;
-      border-top-right-radius: 50% 100px;
-      transform: translateY(50px);
-      z-index: 0;
     }
 
     main {
-      padding: 0px 20px 40px 20px;
+      flex: 1;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      z-index: 1;
     }
 
     .form-container {
@@ -74,13 +75,10 @@
       padding: 30px;
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 20px;
+      gap: 25px;
       width: 100%;
       max-width: 800px;
-      transform: translateY(-50px);
-      position: relative;
-      z-index: 2;
+      margin-bottom: 30px;
     }
 
     .form-group {
@@ -90,20 +88,12 @@
       min-width: 200px;
     }
 
-    .form-group label {
-      font-size: 0.9em;
-      color: #555;
-      margin-bottom: 5px;
-      font-weight: 400;
-    }
-
     input[type="text"],
     input[type="number"] {
       padding: 12px;
       font-size: 1em;
       border: 1px solid var(--input-border-color);
       border-radius: 4px;
-      box-sizing: border-box;
       width: 100%;
     }
 
@@ -116,26 +106,24 @@
       font-size: 1.1em;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
       background-color: var(--pricewise-green-button-hover);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    }
+
+    #spinner {
+      display: none;
+      margin: 20px auto;
+      text-align: center;
+      font-weight: bold;
     }
 
     .result-section {
       margin-top: 20px;
       width: 100%;
       max-width: 800px;
-    }
-
-    .result-section h3 {
-      color: var(--heading-color);
-      margin-bottom: 15px;
-      font-size: 1.5em;
-      text-align: left;
     }
 
     .result-item {
@@ -146,32 +134,17 @@
       box-shadow: var(--box-shadow);
     }
 
-    .result-item strong {
-      color: var(--pricewise-dark-blue);
-      font-size: 1.2em;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .result-item p.big {
-      font-size: 1.2em;
-      margin-top: 5px;
-      font-weight: bold;
-    }
-
     .note {
       font-style: italic;
       margin-top: 30px;
       font-size: 0.95em;
       color: #555;
       text-align: center;
-      width: 100%;
-      max-width: 800px;
     }
 
     #savings-message {
       background-color: #d9fdd3;
-      padding: 18px 25px;
+      padding: 18px;
       border-left: 5px solid #4CAF50;
       margin-top: 30px;
       font-weight: bold;
@@ -179,98 +152,226 @@
       box-shadow: var(--box-shadow);
     }
 
-    @media (max-width: 768px) {
-      header {
-        padding: 60px 15px;
-        font-size: 2em;
-      }
-      header::after {
-        bottom: -25px;
-        height: 50px;
-        transform: translateY(25px);
-      }
-      main {
-        padding: 0px 15px 30px 15px;
-      }
-      .form-container {
-        padding: 20px;
-        flex-direction: column;
-        transform: translateY(-25px);
-      }
-      .form-group {
-        min-width: unset;
-        width: 100%;
-      }
-      button {
-        width: 100%;
-      }
-      .result-section, .note, #savings-message {
-        padding: 0 15px;
-        box-sizing: border-box;
-      }
+    footer {
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      margin-top: auto;
     }
   </style>
 </head>
 <body>
-  <header>Milieuvriendelijke Reisvergelijker</header>
+  <header>
+   De Groene Reisvergelijker
+  </header>
   <main>
     <div class="form-container">
       <div class="form-group">
-        <label for="from">Van (gebruik lokale naam):</label>
-        <input type="text" id="from" list="cities" autocomplete="off" oninput="filterCities(this.value)">
+        <label for="from">Van 
+        <input type="text" id="from" list="cities" oninput="filterCities(this.value)" />
       </div>
       <div class="form-group">
-        <label for="to">Naar (gebruik lokale naam):</label>
-        <input type="text" id="to" list="cities" autocomplete="off" oninput="filterCities(this.value)">
+        <label for="to">Naar :</label>
+        <input type="text" id="to" list="cities" oninput="filterCities(this.value)" />
       </div>
       <div class="form-group">
         <label for="persons">Aantal personen:</label>
-        <input type="number" id="persons" value="1" min="1">
+        <input type="number" id="persons" value="1" min="1" />
       </div>
       <div class="form-group">
         <label>&nbsp;</label>
-        <button onclick="calculate()">Bereken</button>
+        <button onclick="startCalculation()">Bereken</button>
       </div>
     </div>
     <datalist id="cities"></datalist>
 
+    <div id="spinner">⏳ Wij zoeken naar de groenste optie voor u...</div>
+
     <div class="result-section">
-      <h3>Reisopties (van minst naar meest CO₂-uitstoot):</h3>
+      <div id="distance"></div>
+      <h3>De groenste optie is: <span id="best-mode"></span></h3>
       <div id="results"></div>
       <div id="savings-message"></div>
     </div>
+
     <div class="note">
-      Let op: gebruik de lokale naam van de stad, zoals "Roma" i.p.v. "Rome", "Firenze" i.p.v. "Florence".
+      Gebruik de lokale naam van steden (bijv. Roma, Firenze, Berlin).
     </div>
+
+  <style>
+    .styled-table {
+      border-collapse: collapse;
+      margin: 25px auto;
+      font-size: 0.95em;
+      font-family: 'Roboto', sans-serif;
+      min-width: 320px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .styled-table caption {
+      font-size: 1.2em;
+      font-weight: bold;
+      padding: 15px;
+      color: #2A3C9A;
+      text-align: left;
+    }
+
+    .styled-table thead tr {
+      background-color: #2A3C9A;
+      color: #ffffff;
+      text-align: left;
+    }
+
+    .styled-table th, .styled-table td {
+      padding: 12px 15px;
+    }
+
+    .styled-table tbody tr {
+      border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+      background-color: #f3f7fa;
+    }
+
+    .styled-table tbody tr:last-of-type {
+      border-bottom: 2px solid #2A3C9A;
+    }
+  </style>
+</head>
+<body>
+  <!-- ... bestaande inhoud blijft ongewijzigd tot aan savings-message -->
+
+  <div id="savings-message"></div>
+
+
+
+  <!-- Nieuwe sectie onderaan voor dataverantwoording -->
+ <section id="info-section" style="max-width: 900px; margin: 0 0 40px 40px; text-align: left;">
+  <h3 style="font-size: 1.5em; margin-bottom: 20px; color: #1a1a1a;">
+    Hoe komen wij aan onze informatie over gemiddelde CO₂-uitstoot en gemiddelde prijzen?
+  </h3>
+
+  <button onclick="toggleSources()" id="toggle-button" style="margin-bottom: 20px; padding: 10px 20px; background-color: #2A3C9A; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    Toon bronnen
+  </button>
+
+  <div id="source-tables" style="display: none;">
+    <table class="styled-table">
+      <caption style="text-align: left;">🌍 Gemiddelde CO₂-uitstoot per kilometer per persoon</caption>
+      <thead>
+        <tr>
+          <th>Vervoermiddel</th>
+          <th>CO₂-uitstoot (kg/km/persoon)</th>
+          <th>Toelichting</th>
+          <th>Bronnen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🚆 Trein</td><td>0,041</td><td>Elektrische treinen, EU-stroommix</td>
+          <td><a href="https://www.eea.europa.eu" target="_blank">EEA</a>, <a href="https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting" target="_blank">UK DEFRA</a></td>
+        </tr>
+        <tr>
+          <td>🚗 Auto (elektrisch)</td><td>0,020</td><td>Gem. verbruik 15–18 kWh/100km</td>
+          <td><a href="https://www.iea.org" target="_blank">IEA</a>, <a href="https://www.anwb.nl" target="_blank">ANWB</a></td>
+        </tr>
+        <tr>
+          <td>🚗 Auto (benzine)</td><td>0,120</td><td>6,5L/100km × 2,3 kg CO₂/L</td>
+          <td><a href="https://www.eea.europa.eu" target="_blank">EEA</a></td>
+        </tr>
+        <tr>
+          <td>🚗 Auto (diesel)</td><td>0,100</td><td>5,5L/100km × 2,65 kg CO₂/L</td>
+          <td><a href="https://www.eea.europa.eu" target="_blank">EEA</a></td>
+        </tr>
+        <tr>
+          <td>✈️ Vliegtuig</td><td>0,250</td><td>Korte vluchten binnen Europa</td>
+          <td><a href="https://www.atmosfair.de" target="_blank">Atmosfair</a>, <a href="https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting" target="_blank">DEFRA</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="styled-table">
+      <caption style="text-align: left;">💰 Gemiddelde kosten per kilometer per persoon</caption>
+      <thead>
+        <tr>
+          <th>Vervoermiddel</th>
+          <th>Prijs (€ / km / persoon)</th>
+          <th>Toelichting</th>
+          <th>Bronnen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🚆 Trein</td><td>€ 0,15</td><td>Gem. prijs Europa (zonder korting)</td>
+          <td><a href="https://www.statista.com" target="_blank">Statista</a>, <a href="https://www.ns.nl" target="_blank">NS</a>, <a href="https://www.bahn.com" target="_blank">DB</a>, <a href="https://www.sncf.com" target="_blank">SNCF</a></td>
+        </tr>
+        <tr>
+          <td>🚗 Auto (elektrisch)</td><td>€ 0,05</td><td>€0,20/kWh × 15 kWh/100km</td>
+          <td><a href="https://www.anwb.nl" target="_blank">ANWB</a>, <a href="https://www.iea.org" target="_blank">IEA</a></td>
+        </tr>
+        <tr>
+          <td>🚗 Auto (benzine)</td><td>€ 0,15</td><td>€1,90/L × 6,5L/100km</td>
+          <td><a href="https://www.anwb.nl" target="_blank">ANWB</a></td>
+        </tr>
+        <tr>
+          <td>🚗 Auto (diesel)</td><td>€ 0,13</td><td>€1,75/L × 5,5L/100km</td>
+          <td><a href="https://www.anwb.nl" target="_blank">ANWB</a></td>
+        </tr>
+        <tr>
+          <td>✈️ Vliegtuig</td><td>€ 0,35</td><td>Gemiddelde prijs incl. belastingen</td>
+          <td><a href="https://www.beuc.eu" target="_blank">BEUC</a>, <a href="https://www.ryanair.com" target="_blank">Ryanair</a>, <a href="https://www.easyjet.com" target="_blank">EasyJet</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 20px; font-size: 0.95em; color: #444; line-height: 1.6;">
+      Wij maken gebruik van betrouwbare internationale bronnen en gemiddelden om reizigers inzicht te geven in de impact van hun vervoerskeuze. Uiteraard spelen veel factoren mee in de uiteindelijke uitstoot en kosten, zoals de bezettingsgraad van het vervoermiddel, de energiebron voor treinen of auto's, weersomstandigheden, en specifieke routes. Onze cijfers zijn dan ook niet bedoeld als exacte berekening, maar als een begrijpelijk en betrouwbaar kader voor bewuste keuzes.
+    </p>
+  </div>
+</section>
+
+<script>
+  function toggleSources() {
+    const tableDiv = document.getElementById("source-tables");
+    const button = document.getElementById("toggle-button");
+    const isHidden = tableDiv.style.display === "none";
+    tableDiv.style.display = isHidden ? "block" : "none";
+    button.innerText = isHidden ? "Verberg bronnen" : "Toon bronnen";
+  }
+</script>
+
+</body>
+</html>
   </main>
+  <footer>
+    © Coen's groene vergelijker – Voor alle resultaten maken wij gebruik van gemiddelde uitstoot per kilometer per vervoersmiddel op basis van de bovengenoemde tabellen - op Alle rechten voorbehouden
+  </footer>
 
   <script>
     let cityData = [];
     let fuse;
 
     async function loadCities() {
-      try {
-        const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/europese_plaatsen.json");
-        cityData = res.data;
-        const names = [...new Set(cityData.map(c => c.name))];
-        fuse = new Fuse(names.map(n => ({ name: n })), { keys: ['name'], threshold: 0.3 });
-      } catch (err) {
-        alert("Kan stedenlijst niet laden.");
-        console.error(err);
-      }
+      const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/europese_plaatsen.json");
+      cityData = res.data;
+      fuse = new Fuse(cityData, { keys: ['name'], threshold: 0.3, ignoreLocation: true });
     }
 
-    function filterCities(query) {
-      if (!fuse || query.length < 1) {
-        document.getElementById('cities').innerHTML = '';
-        return;
-      }
-      const matches = fuse.search(query).slice(0, 10).map(r => r.item.name);
-      document.getElementById('cities').innerHTML = [...new Set(matches)].map(n => `<option value="${n}"></option>`).join('');
+    function filterCities(input) {
+      if (!fuse || input.length < 1) return;
+      const matches = fuse.search(input).slice(0, 10).map(x => x.item.name);
+      const datalist = document.getElementById("cities");
+      datalist.innerHTML = [...new Set(matches)].sort().map(x => `<option value="${x}">`).join("");
     }
 
     function getCity(name) {
-      return cityData.find(c => c.name.toLowerCase() === name.toLowerCase());
+      const result = fuse.search(name);
+      return result.length ? result[0].item : null;
     }
 
     function haversine(lat1, lon1, lat2, lon2) {
@@ -281,17 +382,25 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
+    function startCalculation() {
+      document.getElementById("spinner").style.display = "block";
+      document.getElementById("results").innerHTML = "";
+      document.getElementById("savings-message").innerHTML = "";
+      setTimeout(() => {
+        document.getElementById("spinner").style.display = "none";
+        calculate();
+      }, 3000);
+    }
+
     function calculate() {
       const from = getCity(document.getElementById("from").value);
       const to = getCity(document.getElementById("to").value);
       const persons = parseInt(document.getElementById("persons").value);
 
-      if (!from || !to || persons < 1) {
-        alert("Voer geldige steden en aantal personen in.");
-        return;
-      }
+      if (!from || !to || persons < 1) return alert("Ongeldige invoer.");
 
-      const dist = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
+      const distance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
+      document.getElementById("distance").innerText = `Afstand tussen steden: ${distance.toFixed(0)} km`;
 
       const modes = [
         { type: "Trein", co2: 0.041, price: 0.15 },
@@ -302,28 +411,25 @@
       ];
 
       const results = modes.map(m => {
-        const co2 = m.co2 * dist * (m.shared ? 1/persons : persons);
-        const cost = m.price * dist * (m.shared ? 1 : persons);
+        const co2 = m.co2 * distance * (m.shared ? 1/persons : persons);
+        const cost = m.price * distance * (m.shared ? 1 : persons);
         return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2) };
       }).sort((a, b) => a.co2 - b.co2);
+
+      document.getElementById("best-mode").innerText = results[0].type;
 
       document.getElementById("results").innerHTML = results.map(r => `
         <div class="result-item">
           <strong>${r.type}</strong>
-          <p>CO₂ uitstoot per persoon: ${r.co2} kg</p>
-          <p>Gemiddelde prijs per persoon: €${r.cost}</p>
-          <p class="big">€${r.cost} p.p. | ${r.co2} kg CO₂ p.p.</p>
-        </div>`).join('');
+          CO₂-uitstoot: ${r.co2} kg p.p.<br>
+          Gemiddelde prijs: €${r.cost} p.p.
+        </div>
+      `).join("");
 
-      const beste = results[0];
-      const slechtste = results[results.length - 1];
-      const co2Diff = (slechtste.co2 - beste.co2).toFixed(2);
-      const biefstukken = Math.round(co2Diff / 5);
-      const wijn = Math.round(co2Diff / 1.5);
-
-      document.getElementById("savings-message").innerText =
-        `Kies je voor ${beste.type} in plaats van ${slechtste.type}, dan bespaar je ongeveer ${co2Diff} kg CO₂ per persoon. ` +
-        `Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
+      const verschil = (results[results.length-1].co2 - results[0].co2).toFixed(2);
+      const biefstukken = Math.round(verschil / 5);
+      const wijn = Math.round(verschil / 1.5);
+      document.getElementById("savings-message").innerText = `Als je voor ${results[0].type} kiest in plaats van ${results[results.length-1].type}, bespaar je ${verschil} kg CO₂. Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
     }
 
     document.addEventListener("DOMContentLoaded", loadCities);

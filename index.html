@@ -3,197 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <title>Milieuvriendelijke Reisvergelijker</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background-color: #f4f8fb;
+            padding: 0;
+            background-color: #f3f7fa;
         }
-
         header {
             background-color: #007BFF;
             color: white;
-            padding: 2rem;
+            padding: 20px;
             text-align: center;
+            font-size: 32px;
+            font-weight: bold;
         }
-
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        main {
+            padding: 20px;
         }
-
-        input, select {
-            padding: 0.5rem;
-            width: 48%;
-            margin-bottom: 1rem;
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
         }
-
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 250px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+        }
         button {
-            padding: 0.7rem 1.5rem;
+            padding: 12px 20px;
             background-color: #007BFF;
             color: white;
             border: none;
-            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
         }
-
-        .resultaat {
-            margin-top: 1.5rem;
+        .result-section {
+            margin-top: 20px;
         }
-
-        .mode {
-            background-color: #eef6ff;
-            border-left: 5px solid #007BFF;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
+        .result-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
-
-        .mode h3 {
-            margin-top: 0;
-        }
-
-        .hint {
-            font-size: 0.9rem;
+        .note {
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 14px;
             color: #555;
-            margin-bottom: 1rem;
+        }
+        #savings-message {
+            background-color: #d9fdd3;
+            padding: 15px;
+            border-left: 5px solid #4CAF50;
+            margin-top: 30px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
+    <header>
+        Milieuvriendelijke Reisvergelijker
+    </header>
+    <main>
+        <div class="form-container">
+            <div class="form-group">
+                <label for="from">Van (gebruik lokale naam):</label>
+                <input type="text" id="from" list="cities" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="to">Naar (gebruik lokale naam):</label>
+                <input type="text" id="to" list="cities" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="persons">Aantal personen:</label>
+                <input type="number" id="persons" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button onclick="calculate()">Bereken</button>
+            </div>
+        </div>
+        <datalist id="cities"></datalist>
 
-<header>
-    <h1>Milieuvriendelijke Reisvergelijker</h1>
-</header>
-
-<div class="container">
-    <div class="hint">
-        ⚠️ Let op: gebruik de lokale naam van steden, zoals <strong>Roma</strong> (niet Rome), <strong>Firenze</strong> (niet Florence), <strong>Berlin</strong> (niet Berlijn)
-    </div>
-
-    <input list="steden" id="city1" placeholder="Stad 1">
-    <input list="steden" id="city2" placeholder="Stad 2">
-    <input type="number" id="personen" placeholder="Aantal personen" min="1" value="1">
-
-    <datalist id="steden"></datalist>
-
-    <button onclick="bereken()">Bereken</button>
-
-    <div class="resultaat" id="output"></div>
-</div>
+        <div class="result-section">
+            <h3>Reisopties (van minst naar meest CO₂-uitstoot):</h3>
+            <div id="results"></div>
+            <div id="savings-message"></div>
+        </div>
+        <div class="note">
+            Let op: gebruik de lokale naam van de stad, zoals "Roma" i.p.v. "Rome", "Firenze" i.p.v. "Florence".
+        </div>
+    </main>
 
 <script>
-    let steden = [];
+let cityData = [];
 
-    fetch("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json")
-        .then(res => res.json())
-        .then(data => {
-            steden = data;
-            const datalist = document.getElementById("steden");
-            steden.forEach(stad => {
-                const opt = document.createElement("option");
-                opt.value = stad.name;
-                datalist.appendChild(opt);
-            });
-        });
+async function loadCities() {
+    const response = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json");
+    cityData = response.data;
+    const names = [...new Set(cityData.map(c => c.name))].sort();
+    const datalist = document.getElementById("cities");
+    datalist.innerHTML = names.map(n => `<option value="${n}"></option>`).join("");
+}
 
-    function vindStad(naam) {
-        return steden.find(stad => stad.name.toLowerCase() === naam.toLowerCase());
+function getCity(name) {
+    return cityData.find(c => c.name.toLowerCase() === name.toLowerCase());
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function calculate() {
+    const from = getCity(document.getElementById("from").value);
+    const to = getCity(document.getElementById("to").value);
+    const persons = parseInt(document.getElementById("persons").value);
+
+    if (!from || !to || persons < 1) {
+        alert("Voer geldige steden en aantal personen in.");
+        return;
     }
 
-    function haversine(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
+    const distance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
 
-    function bereken() {
-        const s1 = vindStad(document.getElementById("city1").value.trim());
-        const s2 = vindStad(document.getElementById("city2").value.trim());
-        const personen = parseInt(document.getElementById("personen").value) || 1;
+    const modes = [
+        { type: "Trein", co2: 0.041, price: 0.15 },
+        { type: "Auto (elektrisch)", co2: 0.02, price: 0.05, shared: true },
+        { type: "Auto (benzine)", co2: 0.12, price: 0.15, shared: true },
+        { type: "Auto (diesel)", co2: 0.10, price: 0.13, shared: true },
+        { type: "Vliegtuig", co2: 0.25, price: 0.35 }
+    ];
 
-        if (!s1 || !s2 || personen < 1) {
-            document.getElementById("output").innerHTML = "❌ Ongeldige invoer.";
-            return;
-        }
+    const results = modes.map(m => {
+        const co2 = m.co2 * distance * (m.shared ? 1/persons : persons);
+        const cost = m.price * distance * (m.shared ? 1 : persons);
+        return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2) };
+    }).sort((a, b) => a.co2 - b.co2);
 
-        const afstand = haversine(s1.latitude, s1.longitude, s2.latitude, s2.longitude);
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = results.map(r => `
+        <div class="result-item">
+            <strong>${r.type}</strong><br>
+            CO₂ uitstoot: ${r.co2} kg<br>
+            Gemiddelde prijs: €${r.cost}
+        </div>
+    `).join("");
 
-        const uitstoot = {
-            vliegtuig: 0.255 * afstand * personen,
-            trein: 0.041 * afstand * personen,
-            auto_benzine: (0.192 * afstand) / personen,
-            auto_diesel: (0.171 * afstand) / personen,
-            auto_elek: (0.050 * afstand) / personen
-        };
+    const beste = results[0];
+    const slechtste = results[results.length - 1];
+    const co2Besparing = (slechtste.co2 - beste.co2).toFixed(2);
+    const biefstukken = Math.round(co2Besparing / 5);
+    const wijn = Math.round(co2Besparing / 1.5);
 
-        const prijs = {
-            vliegtuig: 0.13 * afstand * personen,
-            trein: 0.12 * afstand * personen,
-            auto_benzine: (0.10 * afstand) / personen,
-            auto_diesel: (0.09 * afstand) / personen,
-            auto_elek: (0.05 * afstand) / personen
-        };
+    document.getElementById("savings-message").innerText =
+        `Kies je voor ${beste.type} in plaats van ${slechtste.type}, dan bespaar je ongeveer ${co2Besparing} kg CO₂ per persoon. ` +
+        `Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
+}
 
-        const besparingTrein = uitstoot.vliegtuig - uitstoot.trein;
-        const besparingAutoElek = uitstoot.vliegtuig - uitstoot.auto_elek;
-
-        const steaksPerKg = 4;
-        const winePerKg = 7;
-
-        function co2BesparingText(besparing) {
-            return `🥩 ${(besparing * steaksPerKg).toFixed(0)} biefstukken of 🍷 ${(besparing * winePerKg).toFixed(0)} glazen wijn`;
-        }
-
-        const html = `
-            <p>📍 Afstand tussen <strong>${s1.name}</strong> en <strong>${s2.name}</strong>: <strong>${afstand.toFixed(1)} km</strong></p>
-            <p>👥 Aantal personen: <strong>${personen}</strong></p>
-
-            <div class="mode">
-                <h3>✈️ Vliegtuig</h3>
-                <p>CO₂-uitstoot: <strong>${uitstoot.vliegtuig.toFixed(1)} kg</strong></p>
-                <p>Gemiddelde prijs: <strong>€${prijs.vliegtuig.toFixed(2)}</strong></p>
-            </div>
-
-            <div class="mode">
-                <h3>🚆 Trein</h3>
-                <p>CO₂-uitstoot: <strong>${uitstoot.trein.toFixed(1)} kg</strong></p>
-                <p>Gemiddelde prijs: <strong>€${prijs.trein.toFixed(2)}</strong></p>
-                <p>Bespaart t.o.v. vliegtuig: ${co2BesparingText(besparingTrein)}</p>
-            </div>
-
-            <div class="mode">
-                <h3>🚗 Auto - Benzine</h3>
-                <p>CO₂-uitstoot per persoon: <strong>${uitstoot.auto_benzine.toFixed(1)} kg</strong></p>
-                <p>Prijs per persoon: <strong>€${prijs.auto_benzine.toFixed(2)}</strong></p>
-            </div>
-
-            <div class="mode">
-                <h3>🚗 Auto - Diesel</h3>
-                <p>CO₂-uitstoot per persoon: <strong>${uitstoot.auto_diesel.toFixed(1)} kg</strong></p>
-                <p>Prijs per persoon: <strong>€${prijs.auto_diesel.toFixed(2)}</strong></p>
-            </div>
-
-            <div class="mode">
-                <h3>🚗 Auto - Elektrisch</h3>
-                <p>CO₂-uitstoot per persoon: <strong>${uitstoot.auto_elek.toFixed(1)} kg</strong></p>
-                <p>Prijs per persoon: <strong>€${prijs.auto_elek.toFixed(2)}</strong></p>
-                <p>Bespaart t.o.v. vliegtuig: ${co2BesparingText(besparingAutoElek)}</p>
-            </div>
-        `;
-
-        document.getElementById("output").innerHTML = html;
-    }
+loadCities();
 </script>
-
 </body>
 </html>

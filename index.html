@@ -1,468 +1,55 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reis Vergelijker - Vind jouw duurzame reis</title>
-  <link rel="icon" type="image/png" href="favicon.png"> 
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      /* Professionelere kleuren */
-      --primary-color: #004085; /* Diepblauw */
-      --secondary-color: #007bff; /* Standaard blauw */
-      --accent-color-co2: #28a745; /* Groen voor CO2 */
-      --text-color: #343a40; /* Donkergrijs voor tekst */
-      --light-bg: #f8f9fa; /* Zeer lichte grijs */
-      --dark-bg: #e9ecef; /* Iets donkerdere grijs */
-      --card-bg: white;
-      --shadow: 0 4px 8px rgba(0,0,0,0.1);
-      --border-radius: 8px;
-    }
-
-    body {
-      font-family: 'Rubik', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, var(--light-bg), var(--dark-bg));
-      color: var(--text-color);
-      line-height: 1.6;
-    }
-
-    header {
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      padding: 30px 20px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-
-    header h1 {
-      font-size: 2.8rem;
-      margin: 0;
-      font-weight: 800;
-    }
-
-    header p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-      opacity: 0.9;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .search-section {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 30px;
-      margin-bottom: 40px;
-    }
-
-    .search-section h2 {
-      text-align: center;
-      color: var(--primary-color);
-      font-size: 1.8rem;
-      margin-top: 0;
-      margin-bottom: 25px;
-    }
-
-    .search-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      align-items: flex-end;
-    }
-
-    .form-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--text-color);
-      font-size: 0.95rem;
-    }
-
-    .form-group input[type="text"],
-    .form-group input[type="date"],
-    .form-group input[type="number"] {
-      width: calc(100% - 22px);
-      padding: 12px;
-      border: 1px solid #ced4da;
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      font-family: 'Rubik', sans-serif;
-      color: var(--text-color);
-    }
-
-    .search-button {
-      padding: 12px 25px;
-      background-color: var(--secondary-color);
-      color: white;
-      border: none;
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .search-button:hover {
-      background-color: var(--primary-color);
-    }
-
-    .results-section {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 30px;
-    }
-
-    .results-section h2 {
-      text-align: center;
-      color: var(--primary-color);
-      font-size: 1.8rem;
-      margin-top: 0;
-      margin-bottom: 25px;
-    }
-
-    #results-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .result-card {
-      border: 1px solid #eee;
-      border-radius: var(--border-radius);
-      padding: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      transition: transform 0.2s ease;
-    }
-
-    .result-card:hover {
-      transform: translateY(-3px);
-    }
-
-    .result-card .icon {
-      font-size: 2.5rem;
-      color: var(--secondary-color);
-      flex-basis: 50px;
-      text-align: center;
-    }
-
-    .result-card .details {
-      flex: 3;
-      min-width: 250px;
-    }
-
-    .result-card .details h3 {
-      margin: 0 0 5px;
-      font-size: 1.3rem;
-      color: var(--primary-color);
-    }
-
-    .result-card .details p {
-      margin: 0;
-      font-size: 0.95rem;
-      color: #6c757d;
-    }
-
-    .result-card .metrics {
-      flex: 1;
-      min-width: 120px;
-      text-align: right;
-      font-weight: 600;
-    }
-
-    .metric-item {
-      margin-bottom: 5px;
-    }
-
-    .metric-item strong {
-      color: var(--secondary-color);
-    }
-
-    .metric-co2 {
-      color: var(--accent-color-co2);
-      font-weight: 800;
-    }
-
-    .no-results {
-      text-align: center;
-      color: #777;
-      padding: 30px;
-      font-size: 1.1rem;
-    }
-
-    .co2-disclaimer, .savings-container {
-        font-size: 0.9rem;
-        color: #6c757d;
-        text-align: center;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-    }
-    .savings-container {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--primary-color);
-    }
-    .savings-item {
-        margin-bottom: 5px;
-    }
-
-
-    /* Media Queries voor responsiviteit */
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-      header p {
-        font-size: 1rem;
-      }
-      .search-form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .form-group {
-        min-width: auto;
-        width: 100%;
-      }
-      .search-button {
-        width: 100%;
-      }
-      .result-card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .result-card .icon {
-        margin-bottom: 10px;
-        flex-basis: auto;
-        width: 100%;
-        text-align: left;
-      }
-      .result-card .metrics {
-        text-align: left;
-        margin-top: 15px;
-        width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Afstand tussen Europese steden</title>
 </head>
 <body>
-  <header>
-    <h1>Reis Vergelijker</h1>
-    <p>Vind de snelste, goedkoopste en meest duurzame reisoptie.</p>
-  </header>
+    <h2>Afstand berekenen tussen twee steden</h2>
+    <input type="text" id="city1" placeholder="Stad 1">
+    <input type="text" id="city2" placeholder="Stad 2">
+    <button onclick="berekenAfstand()">Bereken afstand</button>
+    <p id="resultaat"></p>
 
-  <div class="container">
-    <section class="search-section">
-      <h2>Vind jouw reis</h2>
-      <form id="travel-form" class="search-form">
-        <div class="form-group">
-          <label for="vertrek">Vertrekpunt:</label>
-          <input type="text" id="vertrek" placeholder="Bijv. Amsterdam" required>
-        </div>
-        <div class="form-group">
-          <label for="bestemming">Bestemming:</label>
-          <input type="text" id="bestemming" placeholder="Bijv. Barcelona" required>
-        </div>
-        <div class="form-group">
-          <label for="heenreis-datum">Heenreis Datum:</label>
-          <input type="date" id="heenreis-datum" required>
-        </div>
-        <div class="form-group">
-          <label for="terugreis-datum">Terugreis Datum (optioneel):</label>
-          <input type="date" id="terugreis-datum">
-        </div>
-        <div class="form-group">
-          <label for="aantal-personen">Aantal personen:</label>
-          <input type="number" id="aantal-personen" value="1" min="1" required>
-        </div>
-        <button type="submit" class="search-button">Zoek reizen</button>
-      </form>
-    </section>
+    <script>
+        let steden = [];
 
-    <section class="results-section">
-      <h2>Reisopties</h2>
-      <div id="results-container">
-        <p class="no-results" id="initial-message">Voer hierboven je reis in om opties te vinden.</p>
-      </div>
-      <div class="co2-disclaimer">
-        <p>De getoonde prijzen zijn indicatief en de CO2-uitstoot is gebaseerd op gemiddelde waarden per vervoermiddel in Europa (incl. opwekking van elektriciteit voor trein/elektrische auto's). </p>
-      </div>
-      <div id="savings-container" class="savings-container" style="display:none;">
-        <h3>Besparing ten opzichte van Vliegtuig:</h3>
-        <div id="savings-details"></div>
-      </div>
-    </section>
-  </div>
+        // ✅ Jouw JSON-bestand via GitHub
+        fetch("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json")
+            .then(res => res.json())
+            .then(data => steden = data)
+            .catch(err => console.error("Fout bij laden van JSON:", err));
 
-  <script>
-    // Conversiefactoren voor CO2-besparing (geschat)
-    const CO2_PER_WINE_GLASS = 0.25; // kg CO2e per glas wijn (productie, transport, fles)
-    const CO2_PER_STEAK = 8;      // kg CO2e per biefstuk (productie, transport, etc.)
+        function vindStad(naam) {
+            return steden.find(stad => stad.name.toLowerCase() === naam.toLowerCase());
+        }
 
-    const travelData = [
-      {
-        origin: 'Amsterdam',
-        destination: 'Barcelona',
-        options: [
-          { type: 'Vliegtuig', duration: '2u 15m', price: 120, co2PerPerson: 195, details: 'Vluchtnummer: KL1234, Vertrek: 10:00, Aankomst: 12:15' },
-          { type: 'Trein', duration: '6u 45m', price: 90, co2PerPerson: 38, details: 'Vertrek: 08:30 (Intercity), Overstap Parijs (Thalys), Aankomst: 15:15' },
-          { type: 'Auto', duration: '14u 0m', price: 150, co2PerCar: 225, details: 'Routetips: Tanken in Luxemburg, Tol in Frankrijk' } // co2PerCar voor totale uitstoot auto
-        ]
-      },
-      {
-        origin: 'Amsterdam',
-        destination: 'Berlijn',
-        options: [
-          { type: 'Vliegtuig', duration: '1u 20m', price: 90, co2PerPerson: 78, details: 'Vluchtnummer: LH4567, Vertrek: 09:00, Aankomst: 10:20' },
-          { type: 'Trein', duration: '6u 0m', price: 70, co2PerPerson: 15, details: 'Vertrek: 07:00 (Intercity), Directe verbinding, Aankomst: 13:00' },
-          { type: 'Auto', duration: '6u 30m', price: 70, co2PerCar: 90, details: 'Routetips: Snelweg A2, geen tol' }
-        ]
-      },
-      {
-        origin: 'Utrecht',
-        destination: 'Parijs',
-        options: [
-          { type: 'Trein', duration: '3u 20m', price: 50, co2PerPerson: 13, details: 'Vertrek: 11:00 (Thalys), Directe verbinding, Aankomst: 14:20' },
-          { type: 'Auto', duration: '4u 30m', price: 60, co2PerCar: 75, details: 'Routetips: Tol op Franse snelwegen' }
-        ]
-      }
-      // Voeg hier meer routes toe op dezelfde manier
-    ];
+        function haversine(lat1, lon1, lat2, lon2) {
+            const R = 6371; // straal aarde in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
 
-    document.getElementById('travel-form').addEventListener('submit', function(event) {
-      event.preventDefault();
+        function berekenAfstand() {
+            const naam1 = document.getElementById("city1").value.trim();
+            const naam2 = document.getElementById("city2").value.trim();
+            const stad1 = vindStad(naam1);
+            const stad2 = vindStad(naam2);
 
-      const vertrek = document.getElementById('vertrek').value.trim();
-      const bestemming = document.getElementById('bestemming').value.trim();
-      const aantalPersonen = parseInt(document.getElementById('aantal-personen').value, 10);
-      const heenreisDatum = document.getElementById('heenreis-datum').value;
-
-      const resultsContainer = document.getElementById('results-container');
-      const initialMessage = document.getElementById('initial-message');
-      const savingsContainer = document.getElementById('savings-container');
-      const savingsDetails = document.getElementById('savings-details');
-
-      if (initialMessage) {
-        initialMessage.style.display = 'none';
-      }
-      savingsContainer.style.display = 'none'; // Verberg besparingen totdat er resultaten zijn
-      resultsContainer.innerHTML = '';
-      savingsDetails.innerHTML = '';
-
-      const foundRoute = travelData.find(route =>
-        route.origin.toLowerCase() === vertrek.toLowerCase() &&
-        route.destination.toLowerCase() === bestemming.toLowerCase()
-      );
-
-      let planeCo2Total = 0;
-      let hasPlaneOption = false;
-
-      if (foundRoute) {
-        foundRoute.options.forEach(option => {
-          let totalCo2;
-          let totalPrice;
-
-          if (option.type === 'Auto') {
-            totalCo2 = option.co2PerCar; // CO2 van de auto, ongeacht aantal personen
-            totalPrice = option.price; // Prijs van de auto, ongeacht aantal personen
-          } else {
-            totalCo2 = option.co2PerPerson * aantalPersonen;
-            totalPrice = option.price * aantalPersonen;
-          }
-
-          if (option.type === 'Vliegtuig') {
-            planeCo2Total = totalCo2;
-            hasPlaneOption = true;
-          }
-
-          // Bereken prijs per kg CO2 (voorkom delen door nul)
-          const pricePerCo2 = totalCo2 > 0 ? (totalPrice / totalCo2).toFixed(2) : 'N/A';
-
-
-          const card = document.createElement('div');
-          card.className = 'result-card';
-          card.innerHTML = `
-            <div class="icon">${getIcon(option.type)}</div>
-            <div class="details">
-              <h3>${option.type}: ${option.route || `${foundRoute.origin} - ${foundRoute.destination}`}</h3>
-              <p>Duur: <strong>${option.duration}</strong></p>
-              <p>Prijs p.p.: ${option.type !== 'Auto' ? '€ ' + option.price : 'N.v.t.'}</p>
-              <p>Totaalprijs: <strong>€ ${totalPrice}</strong></p>
-              <p>Details: ${option.details} (op ${heenreisDatum})</p>
-            </div>
-            <div class="metrics">
-              <div class="metric-item">CO2 p.p.: ${option.type !== 'Auto' ? option.co2PerPerson + ' kg CO2' : 'N.v.t.'}</div>
-              <div class="metric-item">Totaal CO2: <strong class="metric-co2">${totalCo2.toFixed(0)} kg CO2</strong></div>
-              <div class="metric-item">Prijs / kg CO2: <strong>€ ${pricePerCo2}</strong></div>
-            </div>
-          `;
-          resultsContainer.appendChild(card);
-        });
-
-        // Bereken en toon besparingen als er een vliegtuigoptie was
-        if (hasPlaneOption) {
-            foundRoute.options.forEach(option => {
-                if (option.type !== 'Vliegtuig') {
-                    let otherCo2Total;
-                    if (option.type === 'Auto') {
-                        otherCo2Total = option.co2PerCar;
-                    } else {
-                        otherCo2Total = option.co2PerPerson * aantalPersonen;
-                    }
-
-                    const co2Difference = planeCo2Total - otherCo2Total;
-
-                    if (co2Difference > 0) {
-                        const wineSavings = (co2Difference / CO2_PER_WINE_GLASS).toFixed(0);
-                        const steakSavings = (co2Difference / CO2_PER_STEAK).toFixed(1);
-                        
-                        savingsDetails.innerHTML += `
-                            <div class="savings-item">Als je kiest voor ${option.type} i.p.v. Vliegtuig, bespaar je ${co2Difference.toFixed(0)} kg CO2, wat gelijk staat aan ongeveer:</div>
-                            <div class="savings-item"><strong>${wineSavings} glazen wijn</strong></div>
-                            <div class="savings-item"><strong>${steakSavings} biefstukken</strong></div>
-                            <br>
-                        `;
-                    }
-                }
-            });
-            if (savingsDetails.innerHTML !== '') {
-                savingsContainer.style.display = 'block';
+            if (!stad1 || !stad2) {
+                document.getElementById("resultaat").innerText = "❌ Een van de steden is niet gevonden.";
+                return;
             }
+
+            const afstand = haversine(stad1.latitude, stad1.longitude, stad2.latitude, stad2.longitude);
+            document.getElementById("resultaat").innerText =
+                `📍 Afstand tussen ${stad1.name} en ${stad2.name}: ${afstand.toFixed(1)} km`;
         }
-
-
-      } else {
-        resultsContainer.innerHTML = '<p class="no-results">Geen reisopties gevonden voor deze route. Probeer "Amsterdam" naar "Barcelona" of "Berlijn", of "Utrecht" naar "Parijs".</p>';
-      }
-
-
-      function getIcon(type) {
-        switch (type) {
-          case 'Vliegtuig': return '✈️';
-          case 'Trein': return '🚆';
-          case 'Auto': return '🚗';
-          default: return '❓';
-        }
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>

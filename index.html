@@ -18,7 +18,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 2rem auto;
             background: white;
             padding: 2rem;
@@ -26,10 +26,9 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        input {
+        input, select {
             padding: 0.5rem;
-            width: 45%;
-            margin-right: 1rem;
+            width: 48%;
             margin-bottom: 1rem;
         }
 
@@ -57,6 +56,12 @@
         .mode h3 {
             margin-top: 0;
         }
+
+        .hint {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -66,8 +71,16 @@
 </header>
 
 <div class="container">
-    <input type="text" id="city1" placeholder="Stad 1">
-    <input type="text" id="city2" placeholder="Stad 2">
+    <div class="hint">
+        ⚠️ Let op: gebruik de lokale naam van steden, zoals <strong>Roma</strong> (niet Rome), <strong>Firenze</strong> (niet Florence), <strong>Berlin</strong> (niet Berlijn)
+    </div>
+
+    <input list="steden" id="city1" placeholder="Stad 1">
+    <input list="steden" id="city2" placeholder="Stad 2">
+    <input type="number" id="personen" placeholder="Aantal personen" min="1" value="1">
+
+    <datalist id="steden"></datalist>
+
     <button onclick="bereken()">Bereken</button>
 
     <div class="resultaat" id="output"></div>
@@ -78,8 +91,15 @@
 
     fetch("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json")
         .then(res => res.json())
-        .then(data => steden = data)
-        .catch(err => console.error("Fout bij laden van JSON:", err));
+        .then(data => {
+            steden = data;
+            const datalist = document.getElementById("steden");
+            steden.forEach(stad => {
+                const opt = document.createElement("option");
+                opt.value = stad.name;
+                datalist.appendChild(opt);
+            });
+        });
 
     function vindStad(naam) {
         return steden.find(stad => stad.name.toLowerCase() === naam.toLowerCase());
@@ -97,51 +117,77 @@
     }
 
     function bereken() {
-        const stad1 = document.getElementById("city1").value.trim();
-        const stad2 = document.getElementById("city2").value.trim();
-        const s1 = vindStad(stad1);
-        const s2 = vindStad(stad2);
+        const s1 = vindStad(document.getElementById("city1").value.trim());
+        const s2 = vindStad(document.getElementById("city2").value.trim());
+        const personen = parseInt(document.getElementById("personen").value) || 1;
 
-        if (!s1 || !s2) {
-            document.getElementById("output").innerHTML = "❌ Een van de steden is niet gevonden.";
+        if (!s1 || !s2 || personen < 1) {
+            document.getElementById("output").innerHTML = "❌ Ongeldige invoer.";
             return;
         }
 
         const afstand = haversine(s1.latitude, s1.longitude, s2.latitude, s2.longitude);
 
-        // Gemiddelde CO₂-uitstoot per km (in kg)
         const uitstoot = {
-            vliegtuig: 0.255,
-            auto: 0.192,
-            trein: 0.041
+            vliegtuig: 0.255 * afstand * personen,
+            trein: 0.041 * afstand * personen,
+            auto_benzine: (0.192 * afstand) / personen,
+            auto_diesel: (0.171 * afstand) / personen,
+            auto_elek: (0.050 * afstand) / personen
         };
 
-        // Gemiddelde prijs per km (in euro's)
         const prijs = {
-            vliegtuig: 0.13,
-            auto: 0.10,
-            trein: 0.12
+            vliegtuig: 0.13 * afstand * personen,
+            trein: 0.12 * afstand * personen,
+            auto_benzine: (0.10 * afstand) / personen,
+            auto_diesel: (0.09 * afstand) / personen,
+            auto_elek: (0.05 * afstand) / personen
         };
+
+        const besparingTrein = uitstoot.vliegtuig - uitstoot.trein;
+        const besparingAutoElek = uitstoot.vliegtuig - uitstoot.auto_elek;
+
+        const steaksPerKg = 4;
+        const winePerKg = 7;
+
+        function co2BesparingText(besparing) {
+            return `🥩 ${(besparing * steaksPerKg).toFixed(0)} biefstukken of 🍷 ${(besparing * winePerKg).toFixed(0)} glazen wijn`;
+        }
 
         const html = `
             <p>📍 Afstand tussen <strong>${s1.name}</strong> en <strong>${s2.name}</strong>: <strong>${afstand.toFixed(1)} km</strong></p>
+            <p>👥 Aantal personen: <strong>${personen}</strong></p>
 
             <div class="mode">
                 <h3>✈️ Vliegtuig</h3>
-                <p>CO₂-uitstoot: <strong>${(afstand * uitstoot.vliegtuig).toFixed(1)} kg</strong></p>
-                <p>Gemiddelde prijs: <strong>€${(afstand * prijs.vliegtuig).toFixed(2)}</strong></p>
-            </div>
-
-            <div class="mode">
-                <h3>🚗 Auto</h3>
-                <p>CO₂-uitstoot: <strong>${(afstand * uitstoot.auto).toFixed(1)} kg</strong></p>
-                <p>Gemiddelde prijs: <strong>€${(afstand * prijs.auto).toFixed(2)}</strong></p>
+                <p>CO₂-uitstoot: <strong>${uitstoot.vliegtuig.toFixed(1)} kg</strong></p>
+                <p>Gemiddelde prijs: <strong>€${prijs.vliegtuig.toFixed(2)}</strong></p>
             </div>
 
             <div class="mode">
                 <h3>🚆 Trein</h3>
-                <p>CO₂-uitstoot: <strong>${(afstand * uitstoot.trein).toFixed(1)} kg</strong></p>
-                <p>Gemiddelde prijs: <strong>€${(afstand * prijs.trein).toFixed(2)}</strong></p>
+                <p>CO₂-uitstoot: <strong>${uitstoot.trein.toFixed(1)} kg</strong></p>
+                <p>Gemiddelde prijs: <strong>€${prijs.trein.toFixed(2)}</strong></p>
+                <p>Bespaart t.o.v. vliegtuig: ${co2BesparingText(besparingTrein)}</p>
+            </div>
+
+            <div class="mode">
+                <h3>🚗 Auto - Benzine</h3>
+                <p>CO₂-uitstoot per persoon: <strong>${uitstoot.auto_benzine.toFixed(1)} kg</strong></p>
+                <p>Prijs per persoon: <strong>€${prijs.auto_benzine.toFixed(2)}</strong></p>
+            </div>
+
+            <div class="mode">
+                <h3>🚗 Auto - Diesel</h3>
+                <p>CO₂-uitstoot per persoon: <strong>${uitstoot.auto_diesel.toFixed(1)} kg</strong></p>
+                <p>Prijs per persoon: <strong>€${prijs.auto_diesel.toFixed(2)}</strong></p>
+            </div>
+
+            <div class="mode">
+                <h3>🚗 Auto - Elektrisch</h3>
+                <p>CO₂-uitstoot per persoon: <strong>${uitstoot.auto_elek.toFixed(1)} kg</strong></p>
+                <p>Prijs per persoon: <strong>€${prijs.auto_elek.toFixed(2)}</strong></p>
+                <p>Bespaart t.o.v. vliegtuig: ${co2BesparingText(besparingAutoElek)}</p>
             </div>
         `;
 

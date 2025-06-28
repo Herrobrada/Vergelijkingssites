@@ -2,54 +2,152 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Afstand tussen Europese steden</title>
+    <title>Milieuvriendelijke Reisvergelijker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f8fb;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            padding: 0.5rem;
+            width: 45%;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            padding: 0.7rem 1.5rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .resultaat {
+            margin-top: 1.5rem;
+        }
+
+        .mode {
+            background-color: #eef6ff;
+            border-left: 5px solid #007BFF;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+
+        .mode h3 {
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
-    <h2>Afstand berekenen tussen twee steden</h2>
+
+<header>
+    <h1>Milieuvriendelijke Reisvergelijker</h1>
+</header>
+
+<div class="container">
     <input type="text" id="city1" placeholder="Stad 1">
     <input type="text" id="city2" placeholder="Stad 2">
-    <button onclick="berekenAfstand()">Bereken afstand</button>
-    <p id="resultaat"></p>
+    <button onclick="bereken()">Bereken</button>
 
-    <script>
-        let steden = [];
+    <div class="resultaat" id="output"></div>
+</div>
 
-        // ✅ Jouw JSON-bestand via GitHub
-        fetch("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json")
-            .then(res => res.json())
-            .then(data => steden = data)
-            .catch(err => console.error("Fout bij laden van JSON:", err));
+<script>
+    let steden = [];
 
-        function vindStad(naam) {
-            return steden.find(stad => stad.name.toLowerCase() === naam.toLowerCase());
+    fetch("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/europese_plaatsen.json")
+        .then(res => res.json())
+        .then(data => steden = data)
+        .catch(err => console.error("Fout bij laden van JSON:", err));
+
+    function vindStad(naam) {
+        return steden.find(stad => stad.name.toLowerCase() === naam.toLowerCase());
+    }
+
+    function haversine(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    function bereken() {
+        const stad1 = document.getElementById("city1").value.trim();
+        const stad2 = document.getElementById("city2").value.trim();
+        const s1 = vindStad(stad1);
+        const s2 = vindStad(stad2);
+
+        if (!s1 || !s2) {
+            document.getElementById("output").innerHTML = "❌ Een van de steden is niet gevonden.";
+            return;
         }
 
-        function haversine(lat1, lon1, lat2, lon2) {
-            const R = 6371; // straal aarde in km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        }
+        const afstand = haversine(s1.latitude, s1.longitude, s2.latitude, s2.longitude);
 
-        function berekenAfstand() {
-            const naam1 = document.getElementById("city1").value.trim();
-            const naam2 = document.getElementById("city2").value.trim();
-            const stad1 = vindStad(naam1);
-            const stad2 = vindStad(naam2);
+        // Gemiddelde CO₂-uitstoot per km (in kg)
+        const uitstoot = {
+            vliegtuig: 0.255,
+            auto: 0.192,
+            trein: 0.041
+        };
 
-            if (!stad1 || !stad2) {
-                document.getElementById("resultaat").innerText = "❌ Een van de steden is niet gevonden.";
-                return;
-            }
+        // Gemiddelde prijs per km (in euro's)
+        const prijs = {
+            vliegtuig: 0.13,
+            auto: 0.10,
+            trein: 0.12
+        };
 
-            const afstand = haversine(stad1.latitude, stad1.longitude, stad2.latitude, stad2.longitude);
-            document.getElementById("resultaat").innerText =
-                `📍 Afstand tussen ${stad1.name} en ${stad2.name}: ${afstand.toFixed(1)} km`;
-        }
-    </script>
+        const html = `
+            <p>📍 Afstand tussen <strong>${s1.name}</strong> en <strong>${s2.name}</strong>: <strong>${afstand.toFixed(1)} km</strong></p>
+
+            <div class="mode">
+                <h3>✈️ Vliegtuig</h3>
+                <p>CO₂-uitstoot: <strong>${(afstand * uitstoot.vliegtuig).toFixed(1)} kg</strong></p>
+                <p>Gemiddelde prijs: <strong>€${(afstand * prijs.vliegtuig).toFixed(2)}</strong></p>
+            </div>
+
+            <div class="mode">
+                <h3>🚗 Auto</h3>
+                <p>CO₂-uitstoot: <strong>${(afstand * uitstoot.auto).toFixed(1)} kg</strong></p>
+                <p>Gemiddelde prijs: <strong>€${(afstand * prijs.auto).toFixed(2)}</strong></p>
+            </div>
+
+            <div class="mode">
+                <h3>🚆 Trein</h3>
+                <p>CO₂-uitstoot: <strong>${(afstand * uitstoot.trein).toFixed(1)} kg</strong></p>
+                <p>Gemiddelde prijs: <strong>€${(afstand * prijs.trein).toFixed(2)}</strong></p>
+            </div>
+        `;
+
+        document.getElementById("output").innerHTML = html;
+    }
+</script>
+
 </body>
 </html>

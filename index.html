@@ -393,34 +393,61 @@ function startCalculation() {
 }
 
 function calculate() {
-  const from = getCity(document.getElementById("from").value);
-  const to = getCity(document.getElementById("to").value);
-  const persons = parseInt(document.getElementById("persons").value);
-  if (!from || !to || persons < 1) return alert("Ongeldige invoer.");
+      const from = getCity(document.getElementById("from").value);
+      const to = getCity(document.getElementById("to").value);
+      const persons = parseInt(document.getElementById("persons").value);
+      if (!from || !to || persons < 1) return alert("Ongeldige invoer.");
 
-  const fromAirport = findClosestAirport(from);
-  const toAirport = findClosestAirport(to);
-  const autoToAirport = fromAirport.distance;
-  const flightDistance = haversine(fromAirport.latitude, fromAirport.longitude, toAirport.latitude, toAirport.longitude);
-  const autoFromAirport = toAirport.distance;
+      const fromAirport = findClosestAirport(from);
+      const toAirport = findClosestAirport(to);
 
-  const fullDistance = autoToAirport + flightDistance + autoFromAirport;
+      let fullDistance = null;
 
-  const trainDistance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
+      if (fromAirport && toAirport) {
+        const autoToAirport = haversine(from.latitude, from.longitude, fromAirport.latitude, fromAirport.longitude);
+        const flightDistance = haversine(fromAirport.latitude, fromAirport.longitude, toAirport.latitude, toAirport.longitude);
+        const autoFromAirport = haversine(toAirport.latitude, toAirport.longitude, to.latitude, to.longitude);
+        fullDistance = autoToAirport + flightDistance + autoFromAirport;
+      }
 
-  const modes = [
-    { type: "Trein", co2: 0.041, price: 0.15, dist: trainDistance },
-    { type: "Auto (elektrisch)", co2: 0.02, price: 0.05, dist: trainDistance, shared: true },
-    { type: "Auto (benzine)", co2: 0.12, price: 0.15, dist: trainDistance, shared: true },
-    { type: "Auto (diesel)", co2: 0.10, price: 0.13, dist: trainDistance, shared: true },
-    { type: "Vliegtuig", co2: 0.25, price: 0.35, dist: fullDistance }
-  ];
+      const trainDistance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
 
-  const results = modes.map(m => {
-    const co2 = m.co2 * m.dist * (m.shared ? 1/persons : persons);
-    const cost = m.price * m.dist * (m.shared ? 1 : persons);
-    return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2) };
-  }).sort((a, b) => a.co2 - b.co2);
+      const modes = [
+        { type: "Trein", co2: 0.041, price: 0.15, dist: trainDistance },
+        { type: "Auto (elektrisch)", co2: 0.02, price: 0.05, dist: trainDistance, shared: true },
+        { type: "Auto (benzine)", co2: 0.12, price: 0.15, dist: trainDistance, shared: true },
+        { type: "Auto (diesel)", co2: 0.10, price: 0.13, dist: trainDistance, shared: true }
+      ];
+
+      if (fullDistance) {
+        modes.push({ type: "Vliegtuig", co2: 0.25, price: 0.35, dist: fullDistance });
+      }
+
+      const results = modes.map(m => {
+        const co2 = m.co2 * m.dist * (m.shared ? 1 / persons : persons);
+        const cost = m.price * m.dist * (m.shared ? 1 : persons);
+        return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2) };
+      }).sort((a, b) => a.co2 - b.co2);
+
+      document.getElementById("distance").innerText = `Afstand tussen steden: ${trainDistance.toFixed(0)} km`;
+      document.getElementById("best-mode").innerText = results[0].type;
+      document.getElementById("summary").style.display = "block";
+
+      document.getElementById("results").innerHTML = results.map(r => `
+        <div class="result-item">
+          <strong>${r.type}</strong><br>
+          CO₂-uitstoot: ${r.co2} kg p.p.<br>
+          Gemiddelde prijs: €${r.cost} p.p.
+        </div>
+      `).join("");
+
+      const verschil = (results[results.length - 1].co2 - results[0].co2).toFixed(2);
+      const biefstukken = Math.round(verschil / 5);
+      const wijn = Math.round(verschil / 1.5);
+
+      document.getElementById("savings-message").innerText =
+        `Als je voor ${results[0].type} kiest in plaats van ${results[results.length - 1].type}, bespaar je ${verschil} kg CO₂. Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
+    }).sort((a, b) => a.co2 - b.co2);
 
   document.getElementById("distance").innerText = `Afstand tussen steden: ${trainDistance.toFixed(0)} km`; // Hoofdafstand
   document.getElementById("best-mode").innerText = results[0].type;

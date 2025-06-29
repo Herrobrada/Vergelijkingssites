@@ -344,7 +344,7 @@ async function loadCities() {
 }
 
 async function loadAirports() {
-  const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/eu_commercial_airports_filtered.json");
+  const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/eu_commercial_airports_filtered.json");
   airportData = res.data;
 }
 

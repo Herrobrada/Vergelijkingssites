@@ -607,14 +607,99 @@
     padding: 20px;
   }
 }
+.white-topbar {
+    height: 20px;
+    background-color: white;
+  }
+
+  .hero-wrapper {
+    position: relative;
+    z-index: 5;
+  }
+
+  .hero-section {
+    background-size: cover;
+    background-position: center;
+    padding: 60px 15px 120px;
+    text-align: center;
+    position: relative;
+  }
+
+  .logo-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 30%;
+    z-index: 999;
+  }
+
+  .hero-text h1 {
+    font-size: 1.5em;
+  }
+
+  .hero-text p {
+    font-size: 1em;
+  }
+
+  .tab-content {
+    margin-top: 10px;
+    width: 95%;
+    left: 2.5%;
+    top: 70px;
+    padding: 15px;
+  }
+}
+@media (max-width: 768px) {
+  .label-logo {
+    position: relative;
+    top: 10px;
+    left: 10px;
+    width: 120px;
+    margin-bottom: 10px;
+  }
+
+  .hero-wrapper {
+    order: 1;
+  }
+
+  .topnav {
+    order: 2;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+  }
+
+  .tab-button {
+    width: 100%;
+    text-align: center;
+    font-size: 1em;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .tab-content {
+    width: 90%;
+    left: 5%;
+    transform: none;
+    top: 20px;
+    margin-top: 10px;
+    z-index: 9999;
+  }
+
+  .features-section {
+    margin-top: 20px;
+  }
+
+  .result-section {
+    margin-top: 20px;
+  }
+}
     </style>
 </head>
 <body>
-<div class="topnav">
-  <button class="tab-button" onclick="openTab('uitleg1', this)">Hoe werkt het?</button>
-  <button class="tab-button" onclick="openTab('uitleg2', this)">Wat is ons doel?</button>
-  <button class="tab-button" onclick="openTab('uitleg3', this)">Wat betekent VamosVerde?</button>
-</div>
+
 
 <div id="uitleg1" class="tab-content">
   <p>
@@ -668,12 +753,17 @@
   alt="VamosVerde label"
   class="label-logo"
 />
+<div class="topnav">
+  <button class="tab-button" onclick="openTab('uitleg1', this)">Hoe werkt het?</button>
+  <button class="tab-button" onclick="openTab('uitleg2', this)">Wat is ons doel?</button>
+  <button class="tab-button" onclick="openTab('uitleg3', this)">Wat betekent VamosVerde?</button>
+</div>
 <div class="topbar"></div>
 
     
         </div>
         </header>
-
+<div class="hero-wrapper">
     <section class="hero-section">
         <div class="hero-content">
             <h1>Zo milieuvriendelijk mogelijk reizen?</h1>
@@ -693,11 +783,12 @@
                 <label for="persons">Aantal personen</label>
                 <input type="number" id="persons" value="1" min="1">
             </div>
-            <button class="search-button" onclick="startCalculation()">Bereken</button>
+          <button class="search-button" onclick="startCalculation(); scrollToResults();">Bereken</button>
+
         </div>
         <datalist id="cities"></datalist>
     </section>
-
+</div>
     <section class="features-section">
         <div class="feature-item">
             <i class="fas fa-users"></i>
@@ -723,7 +814,7 @@
         </div>
     </section>
 
-    <main>
+    <main id="result-section">
         <div id="spinner">⏳ Wij zoeken naar de groenste optie voor u...</div>
 
         <div class="result-section">
@@ -960,6 +1051,13 @@
       window.activeTab = null;
     }
   });
+</script>
+<script>
+  function scrollToResults() {
+    if (window.innerWidth <= 768) {
+      document.getElementById("result-section").scrollIntoView({ behavior: "smooth" });
+    }
+  }
 </script>
 </body>
 </html>

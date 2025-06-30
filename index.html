@@ -17,6 +17,51 @@
             background-color: #f0f0f0; /* Lichte achtergrond voor de gehele pagina */
             color: #333;
         }
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: 00px;
+  padding: 20px 0;
+  background-color: #f0f0f0;
+  position: relative;
+  z-index: 1000;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  color: #222;
+  padding: 20px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  margin-right: 2cm;
+}
+
+.tab-button.active {
+  color: red;
+  border-bottom: 2px solid red;
+}
+
+.tab-content {
+  display: none;
+  position: absolute;
+  top: 100px; /* afstand vanaf de bovenkant van de pagina */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 900px;
+  background: white;
+  padding: 30px;
+  font-size: 1em;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+}
+
+
 .label-logo {
   position: absolute;
   top: 34px;
@@ -24,14 +69,7 @@
   width: 13%;
   z-index: 2229999;
 }
-.topbar {
-  width: 100%;
-  height: 80px; /* of wat je wil */
-  background-color: #f0f0f0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* optioneel: subtiele schaduw */
-  position: relative; /* of 'fixed' als je wil dat hij blijft plakken */
-  z-index: 9999;
-}
+
         /* Header Styling - Minimalistisch zoals in Naamloos2.png */
         .header {
             background-color: transparent; /* Geen achtergrondkleur, de hero-sectie is de top */
@@ -76,7 +114,7 @@
             margin-bottom: 3px;
         }
         .logo-tag span:last-child {
-            font-size: 1.4em; /* Grotere tekst voor "VaiVerde" */
+            font-size: 1.4em; /* Grotere tekst voor "VamosVerde" */
         }
 
         /* Geen main-nav in dit design, dus verwijderd */
@@ -548,9 +586,62 @@
     </style>
 </head>
 <body>
+<div class="topnav">
+  <button class="tab-button" onclick="openTab('uitleg1', this)">Hoe werkt het?</button>
+  <button class="tab-button" onclick="openTab('uitleg2', this)">Wat is ons doel?</button>
+  <button class="tab-button" onclick="openTab('uitleg3', this)">Wat betekent VamosVerde?</button>
+</div>
+
+<div id="uitleg1" class="tab-content">
+  <p>
+    Als je een stad invult bij <strong>‘Van’</strong>, bedoelen we meestal de plaats waar je woont of vertrekt. 
+    Bij <strong>‘Naar’</strong> vul je je reisbestemming in – bijvoorbeeld een vakantiebestemming of een stad waar je naartoe wilt.
+  </p>
+  <p>
+    Zodra je op <strong>"Bereken"</strong> klikt, vergelijkt VamosVerde automatisch verschillende vervoersopties (zoals trein, vliegtuig en auto) op basis van:
+  </p>
+  <ul>
+    <li>De afstand tussen de steden</li>
+    <li>De verwachte CO₂-uitstoot</li>
+    <li>De gemiddelde reiskosten</li>
+    <li>De reistijd</li>
+  </ul>
+  <p>
+    Zo zie je in één oogopslag wat de <strong>meest milieubewuste</strong>, <strong>goedkoopste</strong> of <strong>snelste</strong> manier van reizen is.  
+    Jij bepaalt wat voor jou het belangrijkst is – wij zorgen voor de inzichten.
+  </p>
+</div>
+<div id="uitleg2" class="tab-content">
+  <p>
+    Ons doel is om reizigers bewuster te maken van de impact van hun vervoerskeuze.
+    Veel mensen weten niet hoeveel verschil het maakt of je de trein neemt in plaats van het vliegtuig, of wat de echte kosten zijn van autorijden.
+  </p>
+  <p>
+    Met VaiVerde willen we die informatie <strong>in één overzicht</strong> beschikbaar maken. Niet met ingewikkelde rapporten of cijfers, 
+    maar met een simpele vergelijking van CO₂-uitstoot, kosten en reistijd.
+  </p>
+  <p>
+    Zo kun jij een keuze maken die past bij wat jij belangrijk vindt: 
+    <strong>het milieu sparen, geld besparen of gewoon snel aankomen</strong>.
+  </p>
+  <p>
+    Uiteindelijk willen we bijdragen aan een duurzamere wereld door het makkelijker te maken om groenere keuzes te maken, zonder dat het ingewikkeld wordt.
+  </p>
+</div>
+<div id="uitleg3" class="tab-content">
+  <p>
+    <strong>VamosVerde</strong> betekent letterlijk: “Laten we groen gaan”. Het is een oproep om bewuster te reizen — niet alleen voor jezelf, maar ook voor de wereld om je heen.
+  </p>
+  <p>
+    We willen mensen inspireren om keuzes te maken die passen bij een duurzamere toekomst. Door te laten zien wat het effect is van jouw vervoer op het klimaat, maken we het makkelijker om te kiezen voor minder uitstoot en meer bewustzijn.
+  </p>
+  <p>
+    <strong>VamosVerde</strong> is dus meer dan een naam: het is een beweging richting slimme, betaalbare en milieuvriendelijke mobiliteit.
+  </p>
+</div>
 <img
   src="Afbeelding 2 webiste.png.png"
-  alt="VaiVerde label"
+  alt="VamosVerde label"
   class="label-logo"
 />
 <div class="topbar"></div>
@@ -558,14 +649,14 @@
     <header class="header">
         <div class="logo-tag">
             <span>Milieuvriendelijker reizen</span>
-            <span>VaiVerde</span>
+            <span>VamosVerde</span>
         </div>
         </header>
 
     <section class="hero-section">
         <div class="hero-content">
             <h1>Zo milieuvriendelijk mogelijk reizen?</h1>
-            <p>Maak gebruik van VaiVerde</p>
+            <p>Maak gebruik van VamosVerde</p>
         </div>
 
         <div class="search-form-container">
@@ -597,7 +688,7 @@
                 <i class="fas fa-check"></i>
             </div>
             <p><strong>Snel inzicht</strong></p>
-            <p>Weet in seconden hoeveel CO₂ je bespaard</p>
+            <p>Weet in seconden hoeveel CO₂ je bespaard <p>
         </div>
         <div class="feature-item">
             <i class="fas fa-euro-sign"></i>
@@ -820,5 +911,34 @@
             }
         });
     </script>
+<script>
+  function openTab(id, button) {
+    // Sluit alle tabblokken
+    document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
+    // Verwijder 'active' van alle knoppen
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+    // Toon de geselecteerde uitleg
+    const content = document.getElementById(id);
+    content.style.display = 'block';
+    button.classList.add('active');
+
+    // Sla het actieve blok op voor sluiting bij buitenklikken
+    window.activeTab = content;
+  }
+
+  // Klik buiten het uitlegvak? Sluit het
+  document.addEventListener('click', function (e) {
+    if (
+      window.activeTab &&                        // er is een open blok
+      !window.activeTab.contains(e.target) &&    // klik was niet ín het blok
+      !e.target.classList.contains('tab-button') // klik was niet op de knop
+    ) {
+      window.activeTab.style.display = 'none';
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      window.activeTab = null;
+    }
+  });
+</script>
 </body>
 </html>

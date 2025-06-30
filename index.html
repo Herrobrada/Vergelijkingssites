@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="nl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>De Groene Reisvergelijker</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>De Groene Reisvergelijker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
+  <style>
     :root {
       --pricewise-dark-blue: #2A3C9A;
       --pricewise-light-bg: #F3F7FA;
@@ -195,314 +194,239 @@
 </head>
 <body>
 <header>
-<div style="font-size: 2.2em; font-weight: 700;">
+  <div style="font-size: 2.2em; font-weight: 700;">
     De Groene Reisvergelijker
   </div>
-<div style="font-size: 1.1em; font-weight: normal; margin-top: 10px;">
+  <div style="font-size: 1.1em; font-weight: normal; margin-top: 10px;">
     Voor al je Europese reizen
   </div>
 </header>
-<main>
-<div class="form-container">
-<div class="form-group">
-<label for="from">Van</label>
-<input id="from" list="cities" oninput="filterCities(this.value)" type="text"/>
-</div>
-<div class="form-group">
-<label for="to">Naar</label>
-<input id="to" list="cities" oninput="filterCities(this.value)" type="text"/>
-</div>
-<div class="form-group">
-<label for="persons">Aantal personen</label>
-<input id="persons" min="1" type="number" value="1"/>
-</div>
-<div class="form-group">
-<label> </label>
-<button onclick="startCalculation()">Bereken</button>
-</div>
-</div>
-<datalist id="cities"></datalist>
-<div id="spinner">⏳ Wij zoeken naar de groenste optie voor u...</div>
-<div class="result-section">
-<div id="summary" style="display: none;">
-<div id="distance"></div>
-<h3>De groenste optie is: <span id="best-mode"></span></h3>
-</div>
-<div id="results"></div>
-<div id="savings-message"></div>
-</div>
-<div class="note">Gebruik de lokale naam van steden (bijv. Roma, Firenze, Berlin).</div>
-<p></p>
+  <main>
+    <div class="form-container">
+      <div class="form-group">
+        <label for="from">Van</label>
+        <input type="text" id="from" list="cities" oninput="filterCities(this.value)" />
+      </div>
+      <div class="form-group">
+        <label for="to">Naar</label>
+        <input type="text" id="to" list="cities" oninput="filterCities(this.value)" />
+      </div>
+      <div class="form-group">
+        <label for="persons">Aantal personen</label>
+        <input type="number" id="persons" value="1" min="1" />
+      </div>
+      <div class="form-group">
+        <label>&nbsp;</label>
+        <button onclick="startCalculation()">Bereken</button>
+      </div>
+    </div>
+    <datalist id="cities"></datalist>
+
+    <div id="spinner">⏳ Wij zoeken naar de groenste optie voor u...</div>
+
+    <div class="result-section">
+      <div id="summary" style="display: none;">
+        <div id="distance"></div>
+        <h3>De groenste optie is: <span id="best-mode"></span></h3>
+      </div>
+      <div id="results"></div>
+      <div id="savings-message"></div>
+   
+<p/> 
+
+
+
+
+
+
+
+
+
+
+
+
 <p>
-<p></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p/>
+
+
+
+
+
+
+
+
+
+
 <p>
-<section id="info-section" style="max-width: 900px; margin: 40px; text-align: left;">
-<h3 style="font-size: 1.5em; margin-bottom: 20px; color: #1a1a1a;">Hoe komen wij aan onze data en inzichten?</h3>
-<button id="toggle-button" onclick="toggleSources()" style="margin-bottom: 20px; padding: 10px 20px; background-color: #2A3C9A; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    <section id="info-section" style="max-width: 900px; margin: 40px; text-align: left;">
+      <h3 style="font-size: 1.5em; margin-bottom: 20px; color: #1a1a1a;">Hoe komen wij aan onze data en inzichten?</h3>
+      <button onclick="toggleSources()" id="toggle-button" style="margin-bottom: 20px; padding: 10px 20px; background-color: #2A3C9A; color: white; border: none; border-radius: 5px; cursor: pointer;">
         Toon bronnen
       </button>
-<div id="source-tables" style="display: none;">
-<table class="styled-table">
-<caption>🌍 Gemiddelde CO₂-uitstoot per kilometer per persoon</caption>
-<thead>
-<tr><th>Vervoermiddel</th><th>CO₂-uitstoot</th><th>Toelichting</th><th>Bronnen</th></tr>
-</thead>
-<tbody>
-<tr><td>🚆 Trein</td><td>0,041</td><td>Elektrische treinen, EU-stroommix</td><td><a href="https://www.eea.europa.eu">EEA</a>, <a href="https://www.gov.uk\">UK DEFRA</a></td></tr>
-<tr><td>🚗 Auto (elektrisch)</td><td>0,020</td><td>Gem. verbruik 15–18 kWh/100km</td><td><a href="https://www.iea.org">IEA</a>, <a href="https://www.anwb.nl">ANWB</a></td></tr>
-<tr><td>🚗 Auto (benzine)</td><td>0,120</td><td>6,5L/100km × 2,3 kg CO₂/L</td><td><a href="https://www.eea.europa.eu">EEA</a></td></tr>
-<tr><td>🚗 Auto (diesel)</td><td>0,100</td><td>5,5L/100km × 2,65 kg CO₂/L</td><td><a href="https://www.eea.europa.eu">EEA</a></td></tr>
-<tr><td>✈️ Vliegtuig</td><td>0,250</td><td>Korte vluchten binnen Europa</td><td><a href="https://www.atmosfair.de">Atmosfair</a>, <a href="https://www.gov.uk">DEFRA</a></td></tr>
-</tbody>
-</table>
-<table class="styled-table">
-<caption>💰 Gemiddelde kosten per kilometer per persoon</caption>
-<thead>
-<tr><th>Vervoermiddel</th><th>Prijs</th><th>Toelichting</th><th>Bronnen</th></tr>
-</thead>
-<tbody>
-<tr><td>🚆 Trein</td><td>€ 0,15</td><td>Gem. prijs Europa (zonder korting)</td><td><a href="https://www.statista.com">Statista</a>, <a href="https://www.ns.nl">NS</a>, <a href="https://www.bahn.com">DB</a>, <a href='\"https://www.sncf.com\"'>SNCF</a></td></tr>
-<tr><td>🚗 Auto (elektrisch)</td><td>€ 0,05</td><td>€0,20/kWh × 15 kWh/100km</td><td><a href="https://www.anwb.nl">ANWB</a>, <a href="https://www.iea.org">IEA</a></td></tr>
-<tr><td>🚗 Auto (benzine)</td><td>€ 0,15</td><td>€1,90/L × 6,5L/100km</td><td><a href="https://www.anwb.nl">ANWB</a></td></tr>
-<tr><td>🚗 Auto (diesel)</td><td>€ 0,13</td><td>€1,75/L × 5,5L/100km</td><td><a href="https://www.anwb.nl">ANWB</a></td></tr>
-<tr><td>✈️ Vliegtuig</td><td>€ 0,35</td><td>Gemiddelde prijs incl. belastingen</td><td><a href="https://www.beuc.eu">BEUC</a>, <a href="https://www.ryanair.com">Ryanair</a>, <a href="https://www.easyjet.com">EasyJet</a></td></tr>
-</tbody>
-</table>
-</div>
-<p style="margin-top: 20px; font-size: 0.95em; color: #444; line-height: 1.6; max-width: 900px;">
+      
+      <div id="source-tables" style="display: none;">
+        <table class="styled-table">
+          <caption>🌍 Gemiddelde CO₂-uitstoot per kilometer per persoon</caption>
+          <thead>
+            <tr><th>Vervoermiddel</th><th>CO₂-uitstoot p/km</th><th>Toelichting</th><th>Bronnen</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>🚆 Trein</td><td>0,041</td><td>Elektrische treinen, EU-stroommix</td><td><a href="https://www.eea.europa.eu">EEA</a>, <a href="https://www.gov.uk\">UK DEFRA</a></td></tr>
+            <tr><td>🚗 Auto (elektrisch)</td><td>0,020</td><td>Gem. verbruik 15–18 kWh/100km</td><td><a href="https://www.iea.org">IEA</a>, <a href="https://www.anwb.nl">ANWB</a></td></tr>
+            <tr><td>🚗 Auto (benzine)</td><td>0,120</td><td>6,5L/100km × 2,3 kg CO₂/L</td><td><a href="https://www.eea.europa.eu">EEA</a></td></tr>
+            <tr><td>🚗 Auto (diesel)</td><td>0,100</td><td>5,5L/100km × 2,65 kg CO₂/L</td><td><a href="https://www.eea.europa.eu">EEA</a></td></tr>
+            <tr><td>✈️ Vliegtuig</td><td>0,250</td><td>Korte vluchten binnen Europa</td><td><a href="https://www.atmosfair.de">Atmosfair</a>, <a href="https://www.gov.uk">DEFRA</a></td></tr>
+          </tbody>
+        </table>
+        <table class="styled-table">
+          <caption>💰 Gemiddelde kosten per kilometer per persoon</caption>
+          <thead>
+            <tr><th>Vervoermiddel</th><th>Prijs p/km</th><th>Toelichting</th><th>Bronnen</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>🚆 Trein</td><td>€ 0,124</td><td>Gem. prijs Europa (zonder korting)</td><td><a href="https://www.statista.com">Statista</a>, <a href="https://www.ns.nl">NS</a>, <a href="https://www.bahn.com">DB</a>, <a href=\"https://www.sncf.com\">SNCF</a></td></tr>
+            <tr><td>🚗 Auto (elektrisch)</td><td>€ 0,10</td><td>€0,20/kWh × 15 kWh/100km</td><td><a href="https://www.anwb.nl">ANWB</a>, <a href="https://www.iea.org">IEA</a></td></tr>
+            <tr><td>🚗 Auto (benzine)</td><td>€ 0,14</td><td>€1,90/L × 6,5L/100km</td><td><a href="https://www.anwb.nl">ANWB</a></td></tr>
+            <tr><td>🚗 Auto (diesel)</td><td>€ 0,11</td><td>€1,75/L × 5,5L/100km</td><td><a href="https://www.anwb.nl">ANWB</a></td></tr>
+            <tr><td>✈️ Vliegtuig</td><td>€ 0,09</td><td>Gemiddelde prijs incl. belastingen</td><td><a href="https://www.beuc.eu">BEUC</a>, <a href="https://www.ryanair.com">Ryanair</a>, <a href="https://www.easyjet.com">EasyJet</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+ <p style="margin-top: 20px; font-size: 0.95em; color: #444; line-height: 1.6; max-width: 900px;">
       Wij maken gebruik van betrouwbare internationale bronnen en gemiddelden om reizigers inzicht te geven in de impact van hun vervoerskeuze. Uiteraard spelen veel factoren mee in de uiteindelijke uitstoot en kosten, zoals de bezettingsgraad van het vervoermiddel, de energiebron voor treinen of auto's, weersomstandigheden, en specifieke routes. Onze cijfers zijn dan ook niet bedoeld als exacte berekening, maar als een begrijpelijk en betrouwbaar kader voor bewuste keuzes.
     </p>
-</section>
-</p></p></main>
-<footer>
+    </section>
+  </main>
+
+  <footer>
     © Coen's groene vergelijker – De resultaten zijn niet 100% accuraat, hier kunnen geen rechten aan worden ontleend.Alle rechten voorbehouden
   </footer>
-<script>
-let cityData = [], airportData = [], fuse;
 
-async function loadCities() {
-  const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/europese_plaatsen.json");
-  cityData = res.data;
-  fuse = new Fuse(cityData, { keys: ['name'], threshold: 0.3, ignoreLocation: true });
-}
+  <script>
+    let cityData = [];
+    let fuse;
 
-async function loadAirports() {
-  const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/refs/heads/main/eu_commercial_airports_filtered.json");
-  airportData = res.data;
-}
-
-function filterCities(input) {
-  if (!fuse || input.length < 1) return;
-  const matches = fuse.search(input).slice(0, 10).map(x => x.item.name);
-  const datalist = document.getElementById("cities");
-  datalist.innerHTML = [...new Set(matches)].sort().map(x => `<option value="${x}">`).join("");
-}
-
-function getCity(name) {
-  const result = fuse.search(name);
-  return result.length ? result[0].item : null;
-}
-
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function findClosestAirport(city) {
-  let closest = null;
-  let minDist = Infinity;
-  for (const airport of airportData) {
-    const dist = haversine(city.latitude, city.longitude, airport.latitude, airport.longitude);
-    if (dist < minDist) {
-      minDist = dist;
-      closest = airport;
+    async function loadCities() {
+      const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/europese_plaatsen.json");
+      cityData = res.data;
+      fuse = new Fuse(cityData, { keys: ['name'], threshold: 0.3, ignoreLocation: true });
     }
-  }
-  return { ...closest, distance: minDist };
-}
 
-function startCalculation() {
-  document.getElementById("spinner").style.display = "block";
-  document.getElementById("results").innerHTML = "";
-  document.getElementById("savings-message").innerHTML = "";
-  document.getElementById("summary").style.display = "none";
-  setTimeout(() => {
-    document.getElementById("spinner").style.display = "none";
-    calculate();
-  }, 3000);
-}
-
-function calculate() {
-  const from = getCity(document.getElementById("from").value);
-  const to = getCity(document.getElementById("to").value);
-  const persons = parseInt(document.getElementById("persons").value);
-  if (!from || !to || persons < 1) return alert("Ongeldige invoer.");
-
-  const fromAirport = findClosestAirport(from);
-  const toAirport = findClosestAirport(to);
-  const autoToAirport = fromAirport.distance;
-  const flightDistance = haversine(fromAirport.latitude, fromAirport.longitude, toAirport.latitude, toAirport.longitude);
-  const autoFromAirport = toAirport.distance;
-
-  const fullDistance = autoToAirport + flightDistance + autoFromAirport;
-
-  const trainDistance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
-
-  const modes = [
-    { type: "Trein", co2: 0.041, price: 0.15, dist: trainDistance },
-    { type: "Auto (elektrisch)", co2: 0.02, price: 0.05, dist: trainDistance, shared: true },
-    { type: "Auto (benzine)", co2: 0.12, price: 0.15, dist: trainDistance, shared: true },
-    { type: "Auto (diesel)", co2: 0.10, price: 0.13, dist: trainDistance, shared: true },
-    { type: "Vliegtuig", co2: 0.25, price: 0.35, dist: fullDistance }
-  ];
-
-  const results = modes.map(m => {
-    const co2 = m.co2 * m.dist * (m.shared ? 1/persons : persons);
-    const cost = m.price * m.dist * (m.shared ? 1 : persons);
-    return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2) };
-  }).sort((a, b) => a.co2 - b.co2);
-
-  document.getElementById("distance").innerText = `Afstand tussen steden: ${trainDistance.toFixed(0)} km`; // Hoofdafstand
-  document.getElementById("best-mode").innerText = results[0].type;
-  document.getElementById("summary").style.display = "block";
-
-  document.getElementById("results").innerHTML = results.map(r => `
-    <div class="result-item">
-      <strong>${r.type}</strong><br>
-      CO₂-uitstoot: ${r.co2} kg p.p.<br>
-      Gemiddelde prijs: €${r.cost} p.p.
-    </div>
-  `).join("");
-
-  const verschil = (results[results.length-1].co2 - results[0].co2).toFixed(2);
-  const biefstukken = Math.round(verschil / 5);
-  const wijn = Math.round(verschil / 1.5);
-
-  document.getElementById("savings-message").innerText =
-    `Als je voor ${results[0].type} kiest in plaats van ${results[results.length-1].type}, bespaar je ${verschil} kg CO₂. Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadCities();
-  loadAirports();
-});
-</script>
-<script>
-let cityData = [];
-let airportData = [];
-let fuse;
-
-async function loadData() {
-  const [cities, airports] = await Promise.all([
-    axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/europese_plaatsen.json"),
-    axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/eu_commercial_airports_filtered.json")
-  ]);
-  cityData = cities.data;
-  airportData = airports.data;
-  fuse = new Fuse(cityData, { keys: ['name'], threshold: 0.3, ignoreLocation: true });
-}
-
-function filterCities(input) {
-  if (!fuse || input.length < 1) return;
-  const matches = fuse.search(input).slice(0, 10).map(x => x.item.name);
-  const datalist = document.getElementById("cities");
-  datalist.innerHTML = [...new Set(matches)].sort().map(x => `<option value="${x}">`).join("");
-}
-
-function getCity(name) {
-  const result = fuse.search(name);
-  return result.length ? result[0].item : null;
-}
-
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function findNearestAirport(city) {
-  let nearest = null;
-  let minDist = Infinity;
-  for (const airport of airportData) {
-    const d = haversine(city.latitude, city.longitude, airport.latitude, airport.longitude);
-    if (d < minDist) {
-      minDist = d;
-      nearest = airport;
+    function filterCities(input) {
+      if (!fuse || input.length < 1) return;
+      const matches = fuse.search(input).slice(0, 10).map(x => x.item.name);
+      const datalist = document.getElementById("cities");
+      datalist.innerHTML = [...new Set(matches)].sort().map(x => `<option value=\"${x}\">`).join("");
     }
-  }
-  return { airport: nearest, distance: minDist };
-}
 
-function startCalculation() {
-  document.getElementById("spinner").style.display = "block";
-  document.getElementById("results").innerHTML = "";
-  document.getElementById("savings-message").innerHTML = "";
-  document.getElementById("summary").style.display = "none";
-  setTimeout(() => {
-    document.getElementById("spinner").style.display = "none";
-    calculate();
-  }, 3000);
-}
+    function getCity(name) {
+      const result = fuse.search(name);
+      return result.length ? result[0].item : null;
+    }
 
-function calculate() {
-  const from = getCity(document.getElementById("from").value);
-  const to = getCity(document.getElementById("to").value);
-  const persons = parseInt(document.getElementById("persons").value);
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
 
-  if (!from || !to || persons < 1) return alert("Ongeldige invoer.");
+    function startCalculation() {
+      document.getElementById("spinner").style.display = "block";
+      document.getElementById("results").innerHTML = "";
+      document.getElementById("savings-message").innerHTML = "";
+      document.getElementById("summary").style.display = "none";
+      setTimeout(() => {
+        document.getElementById("spinner").style.display = "none";
+        calculate();
+      }, 1500);
+    }
 
-  const fromAirport = findNearestAirport(from);
-  const toAirport = findNearestAirport(to);
+    function calculate() {
+      const from = getCity(document.getElementById("from").value);
+      const to = getCity(document.getElementById("to").value);
+      const persons = parseInt(document.getElementById("persons").value);
 
-  const hasAirportFrom = fromAirport.distance < 50;
-  const hasAirportTo = toAirport.distance < 50;
+      if (!from || !to || persons < 1) return alert("Ongeldige invoer.");
 
-  const drivingStart = hasAirportFrom ? 0 : fromAirport.distance;
-  const drivingEnd = hasAirportTo ? 0 : toAirport.distance;
-  const flightDistance = haversine(fromAirport.airport.latitude, fromAirport.airport.longitude, toAirport.airport.latitude, toAirport.airport.longitude);
-  const trainOrCarDistance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
+      const distance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
 
-  const totalFlightDistance = drivingStart + flightDistance + drivingEnd;
+      const modes = [
+        { type: "Trein", co2: 0.041, price: 0.124, speed:100 },
+        { type: "Auto (elektrisch)", co2: 0.02, price: 0.10, speed:90, shared: true },
+        { type: "Auto (benzine)", co2: 0.12, price: 0.14, speed:90, shared: true },
+        { type: "Auto (diesel)", co2: 0.10, price: 0.11, speed:90, shared: true },
+        { type: "Vliegtuig", co2: 0.25, price: 0.09, speed:700 }
+      ];
 
-  const modes = [
-    { type: "Trein", co2: 0.041, price: 0.15, distance: trainOrCarDistance },
-    { type: "Auto (elektrisch)", co2: 0.02, price: 0.05, distance: trainOrCarDistance, shared: true },
-    { type: "Auto (benzine)", co2: 0.12, price: 0.15, distance: trainOrCarDistance, shared: true },
-    { type: "Auto (diesel)", co2: 0.10, price: 0.13, distance: trainOrCarDistance, shared: true },
-    { type: "Vliegtuig", co2: 0.25, price: 0.35, distance: totalFlightDistance }
-  ];
+const results = modes.map(m => {
+  const co2 = m.co2 * distance * (m.shared ? 1 / persons : persons);
+  const cost = m.price * distance * (m.shared ? 1 / persons : persons);
+  const time = distance / m.speed;
+  return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2), time: time.toFixed(1) };
+}).sort((a, b) => a.co2 - b.co2);
 
-  const results = modes.map(m => {
-    const co2 = m.co2 * m.distance * (m.shared ? 1/persons : persons);
-    const cost = m.price * m.distance * (m.shared ? 1 : persons);
-    return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2) };
-  }).sort((a, b) => a.co2 - b.co2);
+      document.getElementById("distance").innerText = `Afstand tussen steden: ${distance.toFixed(0)} km`;
+      document.getElementById("best-mode").innerText = results[0].type;
+      document.getElementById("summary").style.display = "block";
 
-  document.getElementById("distance").innerText = `Afstand: ${trainOrCarDistance.toFixed(0)} km (direct), ${totalFlightDistance.toFixed(0)} km (via vliegveld)`;
-  document.getElementById("best-mode").innerText = results[0].type;
-  document.getElementById("summary").style.display = "block";
+      document.getElementById("results").innerHTML = results.map(r => `
+        <div class="result-item">
+          <strong>${r.type}</strong><br>
+          CO₂-uitstoot: ${r.co2} kg p.p.<br>
+          Gemiddelde prijs: €${r.cost} p.p. 
+	  
+Geschatte reistijd: ${r.time} uur
+        </div>
+      `).join("");
 
-  document.getElementById("results").innerHTML = results.map(r => `
-    <div class="result-item">
-      <strong>${r.type}</strong><br>
-      CO₂-uitstoot: ${r.co2} kg p.p.<br>
-      Gemiddelde prijs: €${r.cost} p.p.
-    </div>
-  `).join("");
+      const verschil = (results[results.length-1].co2 - results[0].co2).toFixed(2);
+      const biefstukken = Math.round(verschil / 5);
+      const wijn = Math.round(verschil / 1.5);
 
-  const verschil = (results[results.length-1].co2 - results[0].co2).toFixed(2);
-  const biefstukken = Math.round(verschil / 5);
-  const wijn = Math.round(verschil / 1.5);
+      document.getElementById("savings-message").innerText =
+        `Als je voor ${results[0].type} kiest in plaats van ${results[results.length-1].type}, bespaar je ${verschil} kg CO₂. Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
+    }
 
-  document.getElementById("savings-message").innerText =
-    `Als je voor ${results[0].type} kiest in plaats van ${results[results.length-1].type}, bespaar je ${verschil} kg CO₂. Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
-}
+    function toggleSources() {
+      const tableDiv = document.getElementById("source-tables");
+      const button = document.getElementById("toggle-button");
+      const isHidden = tableDiv.style.display === "none";
+      tableDiv.style.display = isHidden ? "block" : "none";
+      button.innerText = isHidden ? "Verberg bronnen" : "Toon bronnen";
+    }
 
-document.addEventListener("DOMContentLoaded", loadData);
-</script></body>
+    document.addEventListener("DOMContentLoaded", loadCities);
+  </script>
+</body>
 </html>

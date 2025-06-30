@@ -1,439 +1,824 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>De Groene Reisvergelijker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
-  <style>
-    :root {
-      --pricewise-dark-blue: #2A3C9A;
-      --pricewise-light-bg: #F3F7FA;
-      --pricewise-green-button: #90D304;
-      --pricewise-green-button-hover: #7dbd03;
-      --white: #ffffff;
-      --text-color: #333333;
-      --box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      --border-radius: 8px;
-      --input-border-color: #dcdcdc;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViaVerde - De Groene Reisvergelijker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js"></script>
 
-    body {
-      font-family: 'Roboto', Arial, sans-serif;
-      background-color: var(--pricewise-light-bg);
-      color: var(--text-color);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+    <style>
+        /* Algemene Reset & Basisstyling */
+        body {
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f0f0f0; /* Lichte achtergrond voor de gehele pagina */
+            color: #333;
+        }
+.label-logo {
+  position: absolute;
+  top: 34px;
+  left: 199px;
+  width: 13%;
+  z-index: 2229999;
+}
+.topbar {
+  width: 100%;
+  height: 80px; /* of wat je wil */
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* optioneel: subtiele schaduw */
+  position: relative; /* of 'fixed' als je wil dat hij blijft plakken */
+  z-index: 9999;
+}
+        /* Header Styling - Minimalistisch zoals in Naamloos2.png */
+        .header {
+            background-color: transparent; /* Geen achtergrondkleur, de hero-sectie is de top */
+            padding: 0;
+            display: flex;
+            align-items: flex-start; /* Lijn bovenaan uit */
+            justify-content: flex-start;
+            position: absolute; /* Absolute positionering om over de hero te liggen */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0; /* Geen hoogte, alleen voor positionering van de logo-tag */
+            z-index: 100; /* Zorg dat header/logo bovenaan blijft */
+        }
+        .logo-tag {
+            /* De groene tag met het logo en de tekst */
+            background-image: url('Afbeelding%202%20website.png.png');
+            background-size: cover; /* Zorgt dat de afbeelding de hele container bedekt */
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            padding: 15px 25px; /* Padding binnen de tag */
+            border-radius: 0 0 10px 0; /* Afronding aan de onderkant rechts */
+            display: flex;
+            flex-direction: column; /* Tekst onder elkaar */
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 200px; /* Vaste breedte van de tag */
+            height: 80px; /* Vaste hoogte van de tag */
+            box-sizing: border-box; /* Padding binnen de breedte/hoogte */
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            line-height: 1.2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4); /* Schaduw voor leesbaarheid */
+        }
+        .logo-tag span:first-child {
+            font-size: 1.1em; /* Grotere tekst voor "Milieuvriendelijker reizen" */
+            margin-bottom: 3px;
+        }
+        .logo-tag span:last-child {
+            font-size: 1.4em; /* Grotere tekst voor "VaiVerde" */
+        }
 
-    header {
-      background-color: var(--pricewise-dark-blue);
-      color: var(--white);
-      padding: 60px 20px;
-      text-align: center;
-      font-size: 2.2em;
-      font-weight: 700;
-    }
+        /* Geen main-nav in dit design, dus verwijderd */
+        /* .main-nav { ... } */
 
-    main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
 
-    .form-container {
-      background-color: var(--white);
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      padding: 30px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 25px;
-      width: 100%;
-      max-width: 800px;
-      margin-bottom: 30px;
-    }
+        /* Hero Section - Groen met dierenbanner */
+        .hero-section {
+            background-image: url('Afbeelding%201%20website.png.png'); /* Achtergrondafbeelding */
+            background-size: cover; /* Zorgt ervoor dat de afbeelding de hele container bedekt */
+            background-position: bottom center; /* Positioneer de onderkant van de afbeelding in het midden */
+            background-repeat: no-repeat; /* Voorkom herhaling van de afbeelding */
+            color: white;
+            padding: 80px 20px 150px 20px; /* Meer padding onderaan voor formulier overlap */
+            text-align: center;
+            position: relative;
+	    z-index: 10;
+            overflow: hidden;
+            min-height: 200px; /* Minimum hoogte voor de hero sectie */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start; /* Lijn content links uit */
+        }
+        .hero-content {
+            max-width: 800px;
+            margin-left: 5%; /* Ruimte vanaf de linkerkant */
+            text-align: left; /* Tekst links uitlijnen */
+            z-index: 1;
+            position: relative;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Schaduw voor betere leesbaarheid */
+        }
+        .hero-content h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .hero-content p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 200px;
-    }
+        /* Search Form Container - Styling zoals image_0d7ad0.png */
+        .search-form-container {
+    background-color: white;
+    border-radius: 9px;
+    padding: 25px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 1000px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 1000; /* <-- DIT IS DE FIX */
+    border: 9px solid #ddd;
+    overflow: hidden;
+}
 
-    input[type="text"], input[type="number"] {
-      padding: 12px;
-      font-size: 1em;
-      border: 1px solid var(--input-border-color);
-      border-radius: 4px;
-      width: 100%;
-    }
+        .form-group {
+            flex: 1; /* Neemt beschikbare ruimte in */
+            min-width: 180px; /* Minimum breedte voor elk veld */
+            display: flex;
+            flex-direction: column;
+            padding: 0 20px; /* Horizontale padding binnen de groep */
+            box-sizing: border-box;
+            position: relative; /* Voor de label positionering */
+        }
+        /* Verticale scheidingslijnen tussen de input-velden */
+        .form-group:not(:last-of-type)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 10px; /* Start iets onder de label */
+            bottom: 10px; /* Einde iets boven de onderkant van de input */
+            width: 1px;
+            background-color: #e0e0e0; /* Lichte grijze lijn */
+        }
 
-    button {
-      padding: 12px 25px;
-      background-color: var(--pricewise-green-button);
-      color: var(--white);
-      border: none;
-      border-radius: 5px;
-      font-size: 1.1em;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.95em;
+            text-align: left; /* Labels links uitlijnen */
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
+            width: 100%; /* Volle breedte binnen de padding van de form-group */
+            padding: 10px 0; /* Verticale padding, horizontale padding door form-group */
+            border: none; /* Geen individuele borders voor inputs */
+            border-radius: 0; /* Geen afronding op inputs */
+            font-size: 1em;
+            outline: none; /* Geen outline bij focus */
+            background-color: transparent; /* Zorgt dat de witte achtergrond van de container zichtbaar is */
+            text-align: left; /* Input tekst links uitlijnen */
+        }
+        .search-button {
+            background-color: #64bd21;
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+            margin-left: 20px; /* Ruimte tussen laatste input en knop */
+            margin-bottom: 0;
+	    margin-right: 20px /* Zorg dat de knop onderaan de container zit */
+        }
+        .search-button:hover {
+            background-color: #5aa11f;
+            transform: translateY(-2px);
+        }
 
-    button:hover {
-      background-color: var(--pricewise-green-button-hover);
-    }
+        /* Features Section */
+        .features-section {
+            padding-top: 80px;
+            padding-bottom: 60px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        .feature-item {
+            text-align: center;
+            flex: 0 0 200px;
+            background-color: white;
+            padding: 25px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        }
+        .feature-item i {
+            font-size: 2.8em;
+            color: #2A3C9A;
+            margin-bottom: 15px;
+        }
+        .feature-item .icon-bg {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #d1e2bf;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+        .feature-item .icon-bg .fa-check {
+            color: #64bd21;
+            font-size: 2em;
+        }
 
-    #spinner {
-      display: none;
-      margin: 20px auto;
-      text-align: center;
-      font-weight: bold;
-    }
+        .feature-item p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 0.95em;
+        }
+        .feature-item strong {
+            display: block;
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .feature-item .rating {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2A3C9A;
+        }
 
-    .result-section {
-      margin-top: 20px;
-      width: 100%;
-      max-width: 800px;
-    }
+        /* Main content area */
+      main {
+    max-width: 1100px;
+    margin: 10px auto 0 auto; /* voeg top-margin toe */
+    padding: 20px;
+    background-color: #f0f0f0;
+    position: relative;
+    z-index: 1;
+}
 
-    .result-item {
-      background: var(--white);
-      border-radius: var(--border-radius);
-      padding: 18px 25px;
-      margin-bottom: 15px;
-      box-shadow: var(--box-shadow);
-    }
 
-    .note {
-      font-style: italic;
-      margin-top: 30px;
-      font-size: 0.95em;
-      color: #555;
-      text-align: center;
-    }
+        /* Result Section */
+        #spinner {
+            text-align: center;
+            padding: 40px 0;
+            font-size: 1.3em;
+            color: #2A3C9A;
+            font-weight: bold;
+            display: none;
+        }
+        #summary {
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        #summary h3 {
+            color: #2A3C9A;
+            font-size: 1.6em;
+            margin-top: 0;
+        }
+        #summary #best-mode {
+            color: #64bd21;
+            font-weight: bold;
+        }
+        #distance {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 10px;
+        }
 
-    #savings-message {
-      background-color: #d9fdd3;
-      padding: 18px;
-      border-left: 5px solid #4CAF50;
-      margin-top: 30px;
-      font-weight: bold;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-    }
+        #results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .result-item {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+            transition: transform 0.2s ease;
+        }
+        .result-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .result-item strong {
+            font-size: 1.2em;
+            color: #2A3C9A;
+            display: block;
+            margin-bottom: 0px;
+        }
+        #savings-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 1.1em;
+            text-align: center;
+            font-weight: bold;
+        }
 
-    footer {
-      background-color: #000;
-      color: #fff;
-      text-align: center;
-      padding: 15px;
-      margin-top: auto;
-    }
+        /* Info Section (Over ons) */
+        #info-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+        #info-section summary {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #2A3C9A;
+            cursor: pointer;
+            margin-bottom: 25px;
+            list-style: none;
+            position: relative;
+        }
+        #info-section summary::-webkit-details-marker {
+            display: none;
+        }
+        #info-section summary::before {
+            content: "\f055"; /* Plus icoon */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64bd21;
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+        #info-section details[open] summary::before {
+            content: "\f056"; /* Min icoon */
+            transform: translateY(-50%) rotate(0deg);
+        }
 
-    .styled-table {
-      border-collapse: collapse;
-      margin: 25px 0;
-      font-size: 0.95em;
-      font-family: 'Roboto', sans-serif;
-      min-width: 320px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-      background-color: white;
-      border-radius: 8px;
-      overflow: hidden;
-    }
 
-    .styled-table caption {
-      font-size: 1.2em;
-      font-weight: bold;
-      padding: 15px;
-      color: #2A3C9A;
-      text-align: left;
-    }
+        #info-section h3 {
+            font-size: 1.5em;
+            margin-top: 25px;
+            color: #2A3C9A;
+        }
+        #info-section p {
+            font-size: 1em;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
 
-    .styled-table thead tr {
-      background-color: #2A3C9A;
-      color: #ffffff;
-      text-align: left;
-    }
+        #toggle-button {
+            margin-top: 15px;
+            margin-bottom: 30px;
+            padding: 12px 25px;
+            background-color: #2A3C9A;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        #toggle-button:hover {
+            background-color: #1e2c7a;
+        }
 
-    .styled-table th, .styled-table td {
-      padding: 12px 15px;
-    }
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .styled-table caption {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2A3C9A;
+            text-align: left;
+        }
+        .styled-table th, .styled-table td {
+            border: 1px solid #eee;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .styled-table thead tr {
+            background-color: #2A3C9A;
+            color: white;
+        }
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f8f8f8;
+        }
+        .styled-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .styled-table a {
+            color: #2A3C9A;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .styled-table a:hover {
+            text-decoration: underline;
+        }
 
-    .styled-table tbody tr {
-      border-bottom: 1px solid #dddddd;
-    }
+        /* Footer Styling */
+        footer {
+            background-color: #2A3C9A;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+            margin-top: 50px;
+        }
 
-    .styled-table tbody tr:nth-of-type(even) {
-      background-color: #f3f7fa;
-    }
-
-    .styled-table tbody tr:last-of-type {
-      border-bottom: 2px solid #2A3C9A;
-    }
-
-    .styled-table a {
-      font-size: 0.85em;
-      color: #2A3C9A;
-      text-decoration: none;
-    }
-
-    .styled-table a:hover {
-      text-decoration: underline;
-    }
-  </style>
+        /* Responsiviteit */
+        @media (max-width: 768px) {
+            .header {
+                position: static; /* Niet absoluut op mobiel */
+                height: auto;
+            }
+            .logo-tag {
+                position: static; /* Niet absoluut op mobiel */
+                width: 100%;
+                border-radius: 0;
+                padding: 15px 0;
+                height: auto;
+            }
+            .hero-section {
+                padding: 50px 20px 100px 20px;
+                min-height: 300px;
+                background-size: contain;
+                background-position: bottom center;
+                align-items: center; /* Centreer tekst op mobiel */
+            }
+            .hero-content {
+                margin-left: 0;
+                text-align: center;
+            }
+            .hero-content h1 {
+                font-size: 2em;
+            }
+            .hero-content p {
+                font-size: 1.1em;
+            }
+            .search-form-container {
+                position: static;
+                transform: translateX(0%);
+                width: 90%;
+                margin: 20px auto 0 auto;
+                flex-direction: column;
+                gap: 0; /* Geen gap */
+                padding: 20px;
+                bottom: auto;
+                left: auto;
+                border: 1px solid #ddd; /* Behoud de rand */
+            }
+            .form-group {
+                min-width: 100%;
+                max-width: 100%;
+                padding: 10px 0; /* Verticale padding voor gestapelde inputs */
+                border-bottom: 1px solid #e0e0e0; /* Horizontale lijn tussen gestapelde inputs */
+            }
+            .form-group:last-of-type {
+                border-bottom: none; /* Geen lijn onder de laatste groep */
+            }
+            .form-group:not(:last-of-type)::after {
+                content: none; /* Geen verticale lijnen op mobiel */
+            }
+            .form-group label {
+                padding-left: 10px; /* Padding voor labels op mobiel */
+            }
+            .form-group input[type="text"],
+            .form-group input[type="number"] {
+                width: calc(100% - 20px); /* Padding weer meenemen in breedte */
+                padding: 10px; /* Standaard padding op mobiel */
+                border: 1px solid #ddd; /* Rand om de inputs op mobiel */
+                border-radius: 6px;
+                margin-left: 10px; /* Ruimte vanaf de rand */
+            }
+            .search-button {
+                width: calc(100% - 20px);
+                padding: 15px;
+                margin: 20px 10px 0 10px; /* Margins op mobiel */
+            }
+            .features-section {
+                padding-top: 40px;
+                gap: 30px;
+            }
+            .feature-item {
+                flex: 0 0 160px;
+                padding: 20px 10px;
+            }
+            main {
+                padding: 15px;
+            }
+            .styled-table {
+                font-size: 0.85em;
+            }
+            .styled-table th, .styled-table td {
+                padding: 8px 10px;
+            }
+            #info-section summary {
+                font-size: 1.4em;
+            }
+            #info-section h3 {
+                font-size: 1.3em;
+            }
+        }
+    </style>
 </head>
 <body>
-<header>
-  <div style="font-size: 2.2em; font-weight: 700;">
-    De Groene Reisvergelijker
-  </div>
-  <div style="font-size: 1.1em; font-weight: normal; margin-top: 10px;">
-    Voor al je Europese reizen
-  </div>
-</header>
-  <main>
-    <div class="form-container">
-      <div class="form-group">
-        <label for="from">Van</label>
-        <input type="text" id="from" list="cities" oninput="filterCities(this.value)" />
-      </div>
-      <div class="form-group">
-        <label for="to">Naar</label>
-        <input type="text" id="to" list="cities" oninput="filterCities(this.value)" />
-      </div>
-      <div class="form-group">
-        <label for="persons">Aantal personen</label>
-        <input type="number" id="persons" value="1" min="1" />
-      </div>
-      <div class="form-group">
-        <label>&nbsp;</label>
-        <button onclick="startCalculation()">Bereken</button>
-      </div>
-    </div>
-    <datalist id="cities"></datalist>
+<img
+  src="Afbeelding 2 webiste.png.png"
+  alt="VaiVerde label"
+  class="label-logo"
+/>
+<div class="topbar"></div>
 
-    <div id="spinner">⏳ Wij zoeken naar de groenste optie voor u...</div>
+    <header class="header">
+        <div class="logo-tag">
+            <span>Milieuvriendelijker reizen</span>
+            <span>VaiVerde</span>
+        </div>
+        </header>
 
-    <div class="result-section">
-      <div id="summary" style="display: none;">
-        <div id="distance"></div>
-        <h3>De groenste optie is: <span id="best-mode"></span></h3>
-      </div>
-      <div id="results"></div>
-      <div id="savings-message"></div>
-   
-<p/> 
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Zo milieuvriendelijk mogelijk reizen?</h1>
+            <p>Maak gebruik van VaiVerde</p>
+        </div>
 
-
-
-
-
-
-
-
-
-
-
-
-<p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<p/>
-
-
-
-
-
-
-
-
-
-
-<p>
-    <section id="info-section" style="max-width: 900px; margin: 40px; text-align: left;">
-      <h3 style="font-size: 1.5em; margin-bottom: 20px; color: #1a1a1a;">Hoe komen wij aan onze data en inzichten?</h3>
-      <button onclick="toggleSources()" id="toggle-button" style="margin-bottom: 20px; padding: 10px 20px; background-color: #2A3C9A; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Toon bronnen
-      </button>
-      
-      <div id="source-tables" style="display: none;">
-        <table class="styled-table">
-          <caption>🌍 Gemiddelde CO₂-uitstoot per kilometer per persoon</caption>
-          <thead>
-            <tr><th>Vervoermiddel</th><th>CO₂-uitstoot p/km</th><th>Toelichting</th><th>Bronnen</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>🚆 Trein</td><td>0,041</td><td>Elektrische treinen, EU-stroommix</td><td><a href="https://www.eea.europa.eu">EEA</a>, <a href="https://www.gov.uk\">UK DEFRA</a></td></tr>
-            <tr><td>🚗 Auto (elektrisch)</td><td>0,020</td><td>Gem. verbruik 15–18 kWh/100km</td><td><a href="https://www.iea.org">IEA</a>, <a href="https://www.anwb.nl">ANWB</a></td></tr>
-            <tr><td>🚗 Auto (benzine)</td><td>0,120</td><td>6,5L/100km × 2,3 kg CO₂/L</td><td><a href="https://www.eea.europa.eu">EEA</a></td></tr>
-            <tr><td>🚗 Auto (diesel)</td><td>0,100</td><td>5,5L/100km × 2,65 kg CO₂/L</td><td><a href="https://www.eea.europa.eu">EEA</a></td></tr>
-            <tr><td>✈️ Vliegtuig</td><td>0,250</td><td>Korte vluchten binnen Europa</td><td><a href="https://www.atmosfair.de">Atmosfair</a>, <a href="https://www.gov.uk">DEFRA</a></td></tr>
-          </tbody>
-        </table>
-        <table class="styled-table">
-          <caption>💰 Gemiddelde kosten per kilometer per persoon</caption>
-          <thead>
-            <tr><th>Vervoermiddel</th><th>Prijs p/km</th><th>Toelichting</th><th>Bronnen</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>🚆 Trein</td><td>€ 0,124</td><td>Gem. prijs Europa (zonder korting)</td><td><a href="https://www.statista.com">Statista</a>, <a href="https://www.ns.nl">NS</a>, <a href="https://www.bahn.com">DB</a>, <a href=\"https://www.sncf.com\">SNCF</a></td></tr>
-            <tr><td>🚗 Auto (elektrisch)</td><td>€ 0,10</td><td>€0,20/kWh × 15 kWh/100km</td><td><a href="https://www.anwb.nl">ANWB</a>, <a href="https://www.iea.org">IEA</a></td></tr>
-            <tr><td>🚗 Auto (benzine)</td><td>€ 0,14</td><td>€1,90/L × 6,5L/100km</td><td><a href="https://www.anwb.nl">ANWB</a></td></tr>
-            <tr><td>🚗 Auto (diesel)</td><td>€ 0,11</td><td>€1,75/L × 5,5L/100km</td><td><a href="https://www.anwb.nl">ANWB</a></td></tr>
-            <tr><td>✈️ Vliegtuig</td><td>€ 0,09</td><td>Gemiddelde prijs incl. belastingen</td><td><a href="https://www.beuc.eu">BEUC</a>, <a href="https://www.ryanair.com">Ryanair</a>, <a href="https://www.easyjet.com">EasyJet</a></td></tr>
-          </tbody>
-        </table>
-      </div>
- <p style="margin-top: 20px; font-size: 0.95em; color: #444; line-height: 1.6; max-width: 900px;">
-      Wij maken gebruik van betrouwbare internationale bronnen en gemiddelden om reizigers inzicht te geven in de impact van hun vervoerskeuze. Uiteraard spelen veel factoren mee in de uiteindelijke uitstoot en kosten, zoals de bezettingsgraad van het vervoermiddel, de energiebron voor treinen of auto's, weersomstandigheden, en specifieke routes. Onze cijfers zijn dan ook niet bedoeld als exacte berekening, maar als een begrijpelijk en betrouwbaar kader voor bewuste keuzes.
-    </p>
+        <div class="search-form-container">
+            <div class="form-group">
+                <label for="from">Van</label>
+                <input type="text" id="from" list="cities" oninput="filterCities(this.value)" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="to">Naar</label>
+                <input type="text" id="to" list="cities" oninput="filterCities(this.value)" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="persons">Aantal personen</label>
+                <input type="number" id="persons" value="1" min="1">
+            </div>
+            <button class="search-button" onclick="startCalculation()">Bereken</button>
+        </div>
+        <datalist id="cities"></datalist>
     </section>
-  </main>
 
-  <footer>
-    © Coen's groene vergelijker – De resultaten zijn niet 100% accuraat, hier kunnen geen rechten aan worden ontleend.Alle rechten voorbehouden
-  </footer>
+    <section class="features-section">
+        <div class="feature-item">
+            <i class="fas fa-users"></i>
+            <p><strong>24.285</strong></p>
+            <p>mensen vergelijken groener</p>
+        </div>
+        <div class="feature-item">
+            <div class="icon-bg">
+                <i class="fas fa-check"></i>
+            </div>
+            <p><strong>Snel inzicht</strong></p>
+            <p>Weet in seconden hoeveel CO₂ je bespaard/p>
+        </div>
+        <div class="feature-item">
+            <i class="fas fa-euro-sign"></i>
+            <p><strong>De goedkoopste optie,-</strong></p>
+            <p>Bespaar naast CO₂ ook Euro's</p>
+        </div>
+        <div class="feature-item">
+            <i class="fas fa-thumbs-up"></i>
+            <p class="rating">9,1</p>
+            <p>cijfer waardering</p>
+        </div>
+    </section>
 
-  <script>
-    let cityData = [];
-    let fuse;
+    <main>
+        <div id="spinner">⏳ Wij zoeken naar de groenste optie voor u...</div>
 
-    async function loadCities() {
-      const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/europese_plaatsen.json");
-      cityData = res.data;
-      fuse = new Fuse(cityData, { keys: ['name'], threshold: 0.3, ignoreLocation: true });
-    }
+        <div class="result-section">
+            <div id="summary" style="display: none;">
+                <div id="distance"></div>
+                <h3>De groenste optie is: <span id="best-mode"></span></h3>
+            </div>
+            <div id="results"></div>
+            <div id="savings-message"></div>
+        </div>
 
-    function filterCities(input) {
-      if (!fuse || input.length < 1) return;
-      const matches = fuse.search(input).slice(0, 10).map(x => x.item.name);
-      const datalist = document.getElementById("cities");
-      datalist.innerHTML = [...new Set(matches)].sort().map(x => `<option value=\"${x}\">`).join("");
-    }
+        <section id="info-section">
+            <details>
+                <summary>Over ons</summary>
 
-    function getCity(name) {
-      const result = fuse.search(name);
-      return result.length ? result[0].item : null;
-    }
+                <h3>Hoe komen wij aan onze data en inzichten?</h3>
 
-    function haversine(lat1, lon1, lat2, lon2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    }
+                <p>
+                    Wij maken gebruik van betrouwbare internationale bronnen en gemiddelden om reizigers inzicht te geven in de impact van hun vervoerskeuze. Uiteraard spelen veel factoren mee in de uiteindelijke uitstoot en kosten, zoals de bezettingsgraad van het vervoermiddel, de energiebron voor treinen of auto's, weersomstandigheden, en specifieke routes. Onze cijfers zijn dan ook niet bedoeld als exacte berekening, maar als een begrijpelijk en betrouwbaar kader voor bewuste keuzes.
+                </p>
 
-    function startCalculation() {
-      document.getElementById("spinner").style.display = "block";
-      document.getElementById("results").innerHTML = "";
-      document.getElementById("savings-message").innerHTML = "";
-      document.getElementById("summary").style.display = "none";
-      setTimeout(() => {
-        document.getElementById("spinner").style.display = "none";
-        calculate();
-      }, 1500);
-    }
+                <button onclick="toggleSources()" id="toggle-button">
+                    Toon bronnen
+                </button>
 
-    function calculate() {
-      const from = getCity(document.getElementById("from").value);
-      const to = getCity(document.getElementById("to").value);
-      const persons = parseInt(document.getElementById("persons").value);
+                <div id="source-tables" style="display: none;">
+                    <table class="styled-table">
+                        <caption>🌍 Gemiddelde CO₂-uitstoot per kilometer per persoon</caption>
+                        <thead>
+                            <tr><th>Vervoermiddel</th><th>CO₂-uitstoot (kg)</th><th>Toelichting</th><th>Bronnen</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>🚆 Trein</td><td>0,041</td><td>Elektrische treinen, EU-stroommix</td><td><a href="https://www.eea.europa.eu" target="_blank">EEA</a>, <a href="https://www.gov.uk" target="_blank">UK DEFRA</a></td></tr>
+                            <tr><td>🚗 Auto (elektrisch)</td><td>0,020</td><td>Gem. verbruik 15–18 kWh/100km</td><td><a href="https://www.iea.org" target="_blank">IEA</a>, <a href="https://www.anwb.nl" target="_blank">ANWB</a></td></tr>
+                            <tr><td>🚗 Auto (benzine)</td><td>0,120</td><td>6,5L/100km × 2,3 kg CO₂/L</td><td><a href="https://www.eea.europa.eu" target="_blank">EEA</a></td></tr>
+                            <tr><td>🚗 Auto (diesel)</td><td>0,100</td><td>5,5L/100km × 2,65 kg CO₂/L</td><td><a href="https://www.eea.europa.eu" target="_blank">EEA</a></td></tr>
+                            <tr><td>✈️ Vliegtuig</td><td>0,250</td><td>Korte vluchten binnen Europa</td><td><a href="https://www.atmosfair.de" target="_blank">Atmosfair</a>, <a href="https://www.gov.uk" target="_blank">DEFRA</a></td></tr>
+                        </tbody>
+                    </table>
 
-      if (!from || !to || persons < 1) return alert("Ongeldige invoer.");
+                    <table class="styled-table">
+                        <caption>💰 Gemiddelde kosten per kilometer per persoon</caption>
+                        <thead>
+                            <tr><th>Vervoermiddel</th><th>Prijs (€)</th><th>Toelichting</th><th>Bronnen</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>🚆 Trein</td><td>€ 0,15</td><td>Gem. prijs Europa (zonder korting)</td><td><a href="https://www.statista.com" target="_blank">Statista</a>, <a href="https://www.ns.nl" target="_blank">NS</a>, <a href="https://www.bahn.com" target="_blank">DB</a>, <a href="https://www.sncf.com" target="_blank">SNCF</a></td></tr>
+                            <tr><td>🚗 Auto (elektrisch)</td><td>€ 0,05</td><td>€0,20/kWh × 15 kWh/100km</td><td><a href="https://www.anwb.nl" target="_blank">ANWB</a>, <a href="https://www.iea.org" target="_blank">IEA</a></td></tr>
+                            <tr><td>🚗 Auto (benzine)</td><td>€ 0,15</td><td>€1,90/L × 6,5L/100km</td><td><a href="https://www.anwb.nl" target="_blank">ANWB</a></td></tr>
+                            <tr><td>🚗 Auto (diesel)</td><td>€ 0,13</td><td>€1,75/L × 5,5L/100km</td><td><a href="https://www.anwb.nl" target="_blank">ANWB</a></td></tr>
+                            <tr><td>✈️ Vliegtuig</td><td>€ 0,35</td><td>Gemiddelde prijs incl. belastingen</td><td><a href="https://www.beuc.eu" target="_blank">BEUC</a>, <a href="https://www.ryanair.com" target="_blank">Ryanair</a>, <a href="https://www.easyjet.com" target="_blank">EasyJet</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        </section>
+    </main>
 
-      const distance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
+    <footer>
+        © Coen's groene vergelijker – De resultaten zijn niet 100% accuraat, hier kunnen geen rechten aan worden ontleend. Alle rechten voorbehouden.
+    </footer>
 
-      const modes = [
-        { type: "Trein", co2: 0.041, price: 0.124, speed:100, factor:1.15 },
-        { type: "Auto (elektrisch)", co2: 0.02, price: 0.10, speed:85, shared: true, factor: 1.2 },
-        { type: "Auto (benzine)", co2: 0.12, price: 0.14, speed:90, shared: true, factor: 1.2},
-        { type: "Auto (diesel)", co2: 0.10, price: 0.11, speed:90, shared: true, factor: 1.2 },
-        { type: "Vliegtuig", co2: 0.25, price: 0.09, speed:700, factor: 1.02 }
-      ];
+    <script>
+        let cityData = [];
+        let fuse;
 
-  const results = modes.map(m => {
-    const adjustedDistance = distance * m.factor;
-    const co2 = m.co2 * adjustedDistance * (m.shared ? 1 / persons : persons);
-    const cost = m.price * adjustedDistance * (m.shared ? 1 / persons : persons);
-    const duration = adjustedDistance / m.speed;
-    return {
-      ...m,
-      adjustedDistance: adjustedDistance.toFixed(1),
-      co2: co2.toFixed(2),
-      cost: cost.toFixed(2),
-      duration: duration.toFixed(1)
-    };
-  }).sort((a, b) => a.co2 - b.co2);
+        async function loadCities() {
+            try {
+                const res = await axios.get("https://raw.githubusercontent.com/Herrobrada/Vergelijkingssites/main/europese_plaatsen.json");
+                cityData = res.data;
+                fuse = new Fuse(cityData, { keys: ['name'], threshold: 0.3, ignoreLocation: true });
+                console.log("Stadsdata geladen en Fuse geïnitialiseerd.");
+            } catch (error) {
+                console.error("Fout bij het laden van stadsdata:", error);
+                alert("Er is een probleem opgetreden bij het laden van de stadsgegevens. Probeer het later opnieuw.");
+            }
+        }
 
-    
-      document.getElementById("best-mode").innerText = results[0].type;
-      document.getElementById("summary").style.display = "block";
+        function filterCities(input) {
+            if (!fuse || input.length < 1) {
+                document.getElementById("cities").innerHTML = "";
+                return;
+            }
+            const matches = fuse.search(input).slice(0, 10).map(x => x.item.name);
+            const datalist = document.getElementById("cities");
+            datalist.innerHTML = [...new Set(matches)].sort().map(x => `<option value="${x}">`).join("");
+        }
 
-  document.getElementById("results").innerHTML = results.map(r => `
-    <div class="result-item">
-      <strong>${r.type}</strong><br>
-      CO₂-uitstoot: ${r.co2} kg p.p.<br>
-      Gemiddelde prijs: €${r.cost} p.p.<br>
-      Geschatte reistijd: ${r.duration} uur<br>
-      Totale afstand: ${r.adjustedDistance} km
-    </div>
-  `).join("");
+        function getCity(name) {
+            if (!fuse) return null;
+            const result = fuse.search(name);
+            return result.length ? result[0].item : null;
+        }
 
-      const verschil = (results[results.length-1].co2 - results[0].co2).toFixed(2);
-      const biefstukken = Math.round(verschil / 5);
-      const wijn = Math.round(verschil / 1.5);
+        function haversine(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Straal van de aarde in kilometers
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
 
-      document.getElementById("savings-message").innerText =
-        `Als je voor ${results[0].type} kiest in plaats van ${results[results.length-1].type}, bespaar je ${verschil} kg CO₂. Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
-    }
+        function startCalculation() {
+            document.getElementById("spinner").style.display = "block";
+            document.getElementById("results").innerHTML = "";
+            document.getElementById("savings-message").innerHTML = "";
+            document.getElementById("summary").style.display = "none";
 
-    function toggleSources() {
-      const tableDiv = document.getElementById("source-tables");
-      const button = document.getElementById("toggle-button");
-      const isHidden = tableDiv.style.display === "none";
-      tableDiv.style.display = isHidden ? "block" : "none";
-      button.innerText = isHidden ? "Verberg bronnen" : "Toon bronnen";
-    }
+            setTimeout(() => {
+                document.getElementById("spinner").style.display = "none";
+                calculate();
+            }, 1500);
+        }
 
-    document.addEventListener("DOMContentLoaded", loadCities);
-  </script>
+        function calculate() {
+            const fromInput = document.getElementById("from").value;
+            const toInput = document.getElementById("to").value;
+            const persons = parseInt(document.getElementById("persons").value);
+
+            const from = getCity(fromInput);
+            const to = getCity(toInput);
+
+            if (!from || !to) {
+                alert("Zorg ervoor dat zowel het vertrekpunt als de bestemming correct zijn ingevuld en bestaan in onze database.");
+                return;
+            }
+            if (persons < 1 || isNaN(persons)) {
+                alert("Het aantal personen moet minimaal 1 zijn.");
+                return;
+            }
+
+            const distance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
+
+            document.getElementById("distance").innerText = `Afstand tussen ${from.name} en ${to.name}: ${distance.toFixed(0)} km`;
+
+            const modes = [
+                { type: "Trein", co2: 0.041, price: 0.15, speed:100, factor:1.15 },
+                { type: "Auto (elektrisch)", co2: 0.02, price: 0.05, speed:85, shared: true, factor: 1.2 },
+                { type: "Auto (benzine)", co2: 0.12, price: 0.15, speed:90, shared: true, factor: 1.2},
+                { type: "Auto (diesel)", co2: 0.10, price: 0.13, speed:90, shared: true, factor: 1.2 },
+                { type: "Vliegtuig", co2: 0.25, price: 0.35, speed:700, factor: 1.02 }
+            ];
+
+            const results = modes.map(m => {
+                const adjustedDistance = distance * m.factor;
+                const co2 = m.co2 * adjustedDistance * (m.shared ? (persons > 0 ? 1 / persons : 1) : 1);
+                const cost = m.price * adjustedDistance * (m.shared ? (persons > 0 ? 1 / persons : 1) : 1);
+                const duration = adjustedDistance / m.speed;
+                return {
+                    ...m,
+                    adjustedDistance: adjustedDistance.toFixed(1),
+                    co2: co2.toFixed(2),
+                    cost: cost.toFixed(2),
+                    duration: duration.toFixed(1)
+                };
+            }).sort((a, b) => a.co2 - b.co2);
+
+            document.getElementById("best-mode").innerText = results[0].type;
+            document.getElementById("summary").style.display = "block";
+
+            document.getElementById("results").innerHTML = results.map(r => `
+                <div class="result-item">
+                    <strong>${r.type}</strong><br>
+                    CO₂-uitstoot: ${r.co2} kg p.p.<br>
+                    Gemiddelde prijs: €${r.cost} p.p.<br>
+                    Geschatte reistijd: ${r.duration} uur<br>
+                    Totale afstand: ${r.adjustedDistance} km
+                </div>
+            `).join("");
+
+            const worstMode = results[results.length - 1];
+            const bestMode = results[0];
+
+            if (worstMode.co2 > 0 && bestMode.co2 >= 0) {
+                const verschil = (worstMode.co2 - bestMode.co2).toFixed(2);
+                const biefstukken = Math.round(verschil / 5);
+                const wijn = Math.round(verschil / 1.5);
+
+                document.getElementById("savings-message").innerText =
+                    `Als je voor ${bestMode.type} kiest in plaats van ${worstMode.type}, bespaar je ${verschil} kg CO₂. Dat staat gelijk aan ${biefstukken} biefstukken of ${wijn} glazen wijn!`;
+            } else {
+                document.getElementById("savings-message").innerText = "";
+            }
+        }
+
+        function toggleSources() {
+            const tableDiv = document.getElementById("source-tables");
+            const button = document.getElementById("toggle-button");
+            const isHidden = tableDiv.style.display === "none";
+            tableDiv.style.display = isHidden ? "block" : "none";
+            button.innerText = isHidden ? "Verberg bronnen" : "Toon bronnen";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCities();
+            const detailsElement = document.querySelector('#info-section details');
+            if (detailsElement) {
+                detailsElement.addEventListener('toggle', function() {
+                    const summaryElement = this.querySelector('summary');
+                    if (this.open) {
+                        summaryElement.style.setProperty('--fa-content', '"\\f056"');
+                    } else {
+                        summaryElement.style.setProperty('--fa-content', '"\\f055"');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

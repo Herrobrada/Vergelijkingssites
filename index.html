@@ -382,33 +382,40 @@
       const distance = haversine(from.latitude, from.longitude, to.latitude, to.longitude);
 
       const modes = [
-        { type: "Trein", co2: 0.041, price: 0.124, speed:100 },
-        { type: "Auto (elektrisch)", co2: 0.02, price: 0.10, speed:90, shared: true },
-        { type: "Auto (benzine)", co2: 0.12, price: 0.14, speed:90, shared: true },
-        { type: "Auto (diesel)", co2: 0.10, price: 0.11, speed:90, shared: true },
-        { type: "Vliegtuig", co2: 0.25, price: 0.09, speed:700 }
+        { type: "Trein", co2: 0.041, price: 0.124, speed:100, factor:1.15 },
+        { type: "Auto (elektrisch)", co2: 0.02, price: 0.10, speed:85, shared: true, factor: 1.2 },
+        { type: "Auto (benzine)", co2: 0.12, price: 0.14, speed:90, shared: true, factor: 1.2},
+        { type: "Auto (diesel)", co2: 0.10, price: 0.11, speed:90, shared: true, factor: 1.2 },
+        { type: "Vliegtuig", co2: 0.25, price: 0.09, speed:700, factor: 1.02 }
       ];
 
-const results = modes.map(m => {
-  const co2 = m.co2 * distance * (m.shared ? 1 / persons : persons);
-  const cost = m.price * distance * (m.shared ? 1 / persons : persons);
-  const time = distance / m.speed;
-  return { ...m, co2: co2.toFixed(2), cost: cost.toFixed(2), time: time.toFixed(1) };
-}).sort((a, b) => a.co2 - b.co2);
+  const results = modes.map(m => {
+    const adjustedDistance = distance * m.factor;
+    const co2 = m.co2 * adjustedDistance * (m.shared ? 1 / persons : persons);
+    const cost = m.price * adjustedDistance * (m.shared ? 1 / persons : persons);
+    const duration = adjustedDistance / m.speed;
+    return {
+      ...m,
+      adjustedDistance: adjustedDistance.toFixed(1),
+      co2: co2.toFixed(2),
+      cost: cost.toFixed(2),
+      duration: duration.toFixed(1)
+    };
+  }).sort((a, b) => a.co2 - b.co2);
 
-      document.getElementById("distance").innerText = `Afstand tussen steden: ${distance.toFixed(0)} km`;
+    
       document.getElementById("best-mode").innerText = results[0].type;
       document.getElementById("summary").style.display = "block";
 
-      document.getElementById("results").innerHTML = results.map(r => `
-        <div class="result-item">
-          <strong>${r.type}</strong><br>
-          CO₂-uitstoot: ${r.co2} kg p.p.<br>
-          Gemiddelde prijs: €${r.cost} p.p. 
-	  
-Geschatte reistijd: ${r.time} uur
-        </div>
-      `).join("");
+  document.getElementById("results").innerHTML = results.map(r => `
+    <div class="result-item">
+      <strong>${r.type}</strong><br>
+      CO₂-uitstoot: ${r.co2} kg p.p.<br>
+      Gemiddelde prijs: €${r.cost} p.p.<br>
+      Geschatte reistijd: ${r.duration} uur<br>
+      Totale afstand: ${r.adjustedDistance} km
+    </div>
+  `).join("");
 
       const verschil = (results[results.length-1].co2 - results[0].co2).toFixed(2);
       const biefstukken = Math.round(verschil / 5);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ViaVerde - De Groene Reisvergelijker</title>
+    <title>VamosVerde - De Groene Reisvergelijker</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -204,8 +204,8 @@
 
         /* Features Section */
         .features-section {
-            padding-top: 80px;
-            padding-bottom: 60px;
+            padding-top: 60px;
+            padding-bottom: 0px;
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
@@ -876,15 +876,35 @@
                 const adjustedDistance = distance * m.factor;
                 const co2 = m.co2 * adjustedDistance * (m.shared ? (persons > 0 ? 1 / persons : 1) : 1);
                 const cost = m.price * adjustedDistance * (m.shared ? (persons > 0 ? 1 / persons : 1) : 1);
-                const duration = adjustedDistance / m.speed;
+                let durationHours = Math.floor(adjustedDistance / m.speed);
+                let durationMinutes = Math.round((adjustedDistance / m.speed - durationHours) * 60);
+
+                // Fix voor afrondingsfouten: als minuten 60 wordt, tel dan een uur op en reset minuten
+                if (durationMinutes === 60) {
+                    durationHours++;
+                    durationMinutes = 0;
+                }
+
+                let durationString = '';
+                if (durationHours > 0) {
+                    durationString += `${durationHours} uur`;
+                }
+                if (durationMinutes > 0) {
+                    durationString += ` ${durationMinutes} min`;
+                }
+                if (durationHours === 0 && durationMinutes === 0) {
+                    durationString = '< 1 min'; // Bij zeer korte afstanden
+                }
+
+
                 return {
                     ...m,
                     adjustedDistance: adjustedDistance.toFixed(1),
                     co2: co2.toFixed(2),
                     cost: cost.toFixed(2),
-                    duration: duration.toFixed(1)
+                    duration: durationString // Hier de string voor weergave
                 };
-            }).sort((a, b) => a.co2 - b.co2);
+            }).sort((a, b) => parseFloat(a.co2) - parseFloat(b.co2)); // Zorg dat co2 als nummer wordt vergeleken
 
             document.getElementById("best-mode").innerText = results[0].type;
             document.getElementById("summary").style.display = "block";
@@ -894,7 +914,7 @@
                     <strong>${r.type}</strong><br>
                     CO₂-uitstoot: ${r.co2} kg p.p.<br>
                     Gemiddelde prijs: €${r.cost} p.p.<br>
-                    Geschatte reistijd: ${r.duration} uur<br>
+                    Geschatte reistijd: ${r.duration}<br>
                     Totale afstand: ${r.adjustedDistance} km
                 </div>
             `).join("");
@@ -903,7 +923,7 @@
             const bestMode = results[0];
 
             if (worstMode.co2 > 0 && bestMode.co2 >= 0) {
-                const verschil = (worstMode.co2 - bestMode.co2).toFixed(2);
+                const verschil = (parseFloat(worstMode.co2) - parseFloat(bestMode.co2)).toFixed(2);
                 const biefstukken = Math.round(verschil / 5);
                 const wijn = Math.round(verschil / 1.5);
 

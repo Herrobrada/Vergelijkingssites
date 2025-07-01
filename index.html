@@ -17,58 +17,60 @@
             background-color: #f0f0f0; /* Lichte achtergrond voor de gehele pagina */
             color: #333;
         }
-.topnav {
-  display: flex;
-  justify-content: center;
-  gap: 00px;
-  padding: 20px 0;
-  background-color: #f0f0f0;
-  position: relative;
-  z-index: 1000;
-}
 
-.tab-button {
-  background: none;
-  border: none;
-  font-size: 1.1em;
-  font-weight: bold;
-  cursor: pointer;
-  color: #222;
-  padding: 20px;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
-  margin-right: 2cm;
-}
+        /* Desktop specifieke topnav - Deze blijft hetzelfde voor desktop */
+        .topnav {
+            display: flex;
+            justify-content: center;
+            gap: 0px;
+            padding: 20px 0;
+            background-color: #f0f0f0;
+            position: relative;
+            z-index: 1000;
+        }
 
-.tab-button.active {
-  color: red;
-  border-bottom: 2px solid red;
-}
+        .tab-button {
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            color: #222;
+            padding: 20px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            margin-right: 2cm;
+        }
 
-.tab-content {
-  display: none;
-  position: absolute;
-  top: 100px; /* afstand vanaf de bovenkant van de pagina */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  max-width: 900px;
-  background: white;
-  padding: 30px;
-  font-size: 1em;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  z-index: 2000;
-}
+        .tab-button.active {
+            color: red;
+            border-bottom: 2px solid red;
+        }
 
+        .tab-content {
+            display: none;
+            position: absolute;
+            top: 100px; /* afstand vanaf de bovenkant van de pagina */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 900px;
+            background: white;
+            padding: 30px;
+            font-size: 1em;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+        }
 
-.label-logo {
-  position: absolute;
-  top: 34px;
-  left: 199px;
-  width: 13%;
-  z-index: 2229999;
-}
+        /* Desktop logo positionering */
+        .label-logo {
+            position: absolute;
+            top: 34px;
+            left: 199px;
+            width: 13%;
+            z-index: 2229999;
+        }
 
         /* Header Styling - Minimalistisch zoals in Naamloos2.png */
         .header {
@@ -84,42 +86,6 @@
             height: 0; /* Geen hoogte, alleen voor positionering van de logo-tag */
             z-index: 100; /* Zorg dat header/logo bovenaan blijft */
         }
-        .logo-tag {
-            /* De groene tag met het logo en de tekst */
-            background-image: url('Afbeelding%202%20website.png.png');
-            background-size: cover; /* Zorgt dat de afbeelding de hele container bedekt */
-            background-position: center;
-            background-repeat: no-repeat;
-            color: white;
-            padding: 15px 25px; /* Padding binnen de tag */
-            border-radius: 0 0 10px 0; /* Afronding aan de onderkant rechts */
-            display: flex;
-            flex-direction: column; /* Tekst onder elkaar */
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 200px; /* Vaste breedte van de tag */
-            height: 80px; /* Vaste hoogte van de tag */
-            box-sizing: border-box; /* Padding binnen de breedte/hoogte */
-            text-align: center;
-            font-weight: bold;
-            font-size: 0.9em;
-            line-height: 1.2;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.4); /* Schaduw voor leesbaarheid */
-        }
-        .logo-tag span:first-child {
-            font-size: 1.1em; /* Grotere tekst voor "Milieuvriendelijker reizen" */
-            margin-bottom: 3px;
-        }
-        .logo-tag span:last-child {
-            font-size: 1.4em; /* Grotere tekst voor "VamosVerde" */
-        }
-
-        /* Geen main-nav in dit design, dus verwijderd */
-        /* .main-nav { ... } */
-
 
         /* Hero Section - Groen met dierenbanner */
         .hero-section {
@@ -131,7 +97,7 @@
             padding: 80px 20px 150px 20px; /* Meer padding onderaan voor formulier overlap */
             text-align: center;
             position: relative;
-	    z-index: 10;
+            z-index: 10;
             overflow: hidden;
             min-height: 200px; /* Minimum hoogte voor de hero sectie */
             display: flex;
@@ -159,24 +125,24 @@
 
         /* Search Form Container - Styling zoals image_0d7ad0.png */
         .search-form-container {
-    background-color: white;
-    border-radius: 9px;
-    padding: 25px 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 95%;
-    max-width: 1000px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-end;
-    z-index: 1000; /* <-- DIT IS DE FIX */
-    border: 9px solid #ddd;
-    overflow: hidden;
-}
+            background-color: white;
+            border-radius: 9px;
+            padding: 25px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1000px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+            border: 9px solid #ddd;
+            overflow: hidden;
+        }
 
         .form-group {
             flex: 1; /* Neemt beschikbare ruimte in */
@@ -229,7 +195,7 @@
             font-weight: bold;
             margin-left: 20px; /* Ruimte tussen laatste input en knop */
             margin-bottom: 0;
-	    margin-right: 20px /* Zorg dat de knop onderaan de container zit */
+            margin-right: 20px /* Zorg dat de knop onderaan de container zit */
         }
         .search-button:hover {
             background-color: #5aa11f;
@@ -297,15 +263,14 @@
         }
 
         /* Main content area */
-      main {
-    max-width: 1100px;
-    margin: 10px auto 0 auto; /* voeg top-margin toe */
-    padding: 20px;
-    background-color: #f0f0f0;
-    position: relative;
-    z-index: 1;
-}
-
+        main {
+            max-width: 1100px;
+            margin: 10px auto 0 auto; /* voeg top-margin toe */
+            padding: 20px;
+            background-color: #f0f0f0;
+            position: relative;
+            z-index: 1;
+        }
 
         /* Result Section */
         #spinner {
@@ -489,281 +454,231 @@
             margin-top: 50px;
         }
 
-        /* Responsiviteit */
+        /* ========================================================== */
+        /* Responsiviteit - ALLEEN voor mobiel (max-width: 768px) */
+        /* ========================================================== */
         @media (max-width: 768px) {
-            .header {
-                position: static; /* Niet absoluut op mobiel */
-                height: auto;
+            /* Algemene aanpassingen voor mobiel */
+            body {
+                padding-top: 0; /* Geen padding meer bovenaan de body */
             }
-            .logo-tag {
+
+            /* Logo op mobiel */
+            .label-logo {
                 position: static; /* Niet absoluut op mobiel */
-                width: 100%;
-                border-radius: 0;
-                padding: 15px 0;
-                height: auto;
+                width: 50%; /* Maak het logo responsief, bijvoorbeeld 50% van de breedte */
+                max-width: 200px; /* Maximale breedte voor het logo */
+                display: block; /* Zorg dat het een blok-element is */
+                margin: 20px auto 0 auto; /* Centreer het logo en geef marge onderaan */
+                z-index: 10; /* Hogere z-index om boven de hero te blijven */
             }
+
+            /* Topnav (tabs) op mobiel */
+            .topnav {
+                flex-direction: column;
+                align-items: center;
+                gap: 5px; /* Minder ruimte tussen de knoppen */
+                padding: 15px 0; /* Iets minder padding */
+                background-color: transparent; /* Transparante achtergrond */
+                position: static; /* Niet absoluut op mobiel */
+                z-index: 1; /* Lager dan de tab-content */
+            }
+
+            .tab-button {
+                font-size: 0.95em; /* Iets kleinere tekst */
+                width: calc(100% - 40px); /* Neem bijna de volledige breedte met padding */
+                text-align: center;
+                padding: 12px 15px; /* Minder padding */
+                border: 1px solid #ccc; /* Voeg een rand toe */
+                border-radius: 5px; /* Afgeronde hoeken */
+                margin-right: 0; /* Geen rechter marge */
+                margin-bottom: 5px; /* Marges tussen de knoppen */
+                background-color: white; /* Witte achtergrond voor knoppen */
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Lichte schaduw */
+            }
+
+            .tab-button.active {
+                color: white;
+                background-color: #2A3C9A; /* Blauwe achtergrond als actief */
+                border-color: #2A3C9A;
+                border-bottom: 2px solid #2A3C9A; /* Behoud de actieve lijn */
+            }
+
+            .tab-content {
+                position: static; /* Niet absoluut op mobiel */
+                transform: none; /* Geen transformatie */
+                width: 90%; /* Breedte aanpassen */
+                max-width: none; /* Geen maximale breedte */
+                margin: 15px auto; /* Centreer en voeg marges toe */
+                padding: 20px; /* Iets minder padding */
+                font-size: 0.9em; /* Iets kleinere tekst */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Minder intense schaduw */
+                z-index: 1000; /* Zorg dat het boven de hero komt te liggen */
+            }
+
+            /* Hero sectie op mobiel */
             .hero-section {
-                padding: 50px 20px 100px 20px;
-                min-height: 300px;
-                background-size: contain;
-                background-position: bottom center;
-                align-items: center; /* Centreer tekst op mobiel */
+                padding: 40px 20px 100px 20px; /* Minder padding bovenaan, iets meer onderaan */
+                min-height: 250px; /* Iets kleinere minimale hoogte */
+                background-size: cover; /* Zorg dat de afbeelding past */
+                background-position: center bottom; /* Centreer de afbeelding */
+                align-items: center; /* Centreer hero-content */
+                justify-content: center; /* Centreer verticaal */
             }
             .hero-content {
-                margin-left: 0;
-                text-align: center;
+                margin-left: 0; /* Geen linker marge */
+                text-align: center; /* Centreer tekst */
+                padding-top: 20px; /* Extra padding bovenaan voor de tekst */
             }
             .hero-content h1 {
-                font-size: 2em;
+                font-size: 2.2em; /* Iets kleiner lettertype */
+                margin-bottom: 10px;
             }
             .hero-content p {
                 font-size: 1.1em;
             }
+
+            /* Zoekformulier op mobiel */
             .search-form-container {
-                position: static;
-                transform: translateX(0%);
-                width: 90%;
-                margin: 20px auto 0 auto;
-                flex-direction: column;
-                gap: 0; /* Geen gap */
-                padding: 20px;
-                bottom: auto;
-                left: auto;
-                border: 1px solid #ddd; /* Behoud de rand */
+                position: static; /* Niet absoluut op mobiel, onder de hero */
+                transform: none; /* Geen transformatie */
+                width: 90%; /* Past beter op mobiel */
+                margin: -50px auto 20px auto; /* Trek het iets omhoog over de hero, centreer */
+                flex-direction: column; /* Stapel elementen */
+                padding: 20px; /* Meer padding rondom */
+                border: 1px solid #ddd; /* Behoud een subtiele rand */
             }
             .form-group {
-                min-width: 100%;
-                max-width: 100%;
-                padding: 10px 0; /* Verticale padding voor gestapelde inputs */
-                border-bottom: 1px solid #e0e0e0; /* Horizontale lijn tussen gestapelde inputs */
+                min-width: 100%; /* Volle breedte */
+                padding: 10px 0; /* Verticale padding tussen groepen */
+                border-bottom: 1px solid #eee; /* Horizontale scheiding tussen velden */
             }
             .form-group:last-of-type {
-                border-bottom: none; /* Geen lijn onder de laatste groep */
+                border-bottom: none; /* Geen scheiding onder de laatste groep */
             }
             .form-group:not(:last-of-type)::after {
-                content: none; /* Geen verticale lijnen op mobiel */
+                content: none; /* Verwijder verticale scheidingen */
             }
             .form-group label {
-                padding-left: 10px; /* Padding voor labels op mobiel */
+                padding-left: 10px; /* Padding voor label */
+                margin-bottom: 5px; /* Minder marge onder label */
             }
             .form-group input[type="text"],
             .form-group input[type="number"] {
-                width: calc(100% - 20px); /* Padding weer meenemen in breedte */
-                padding: 10px; /* Standaard padding op mobiel */
-                border: 1px solid #ddd; /* Rand om de inputs op mobiel */
-                border-radius: 6px;
-                margin-left: 10px; /* Ruimte vanaf de rand */
+                width: calc(100% - 20px); /* Neem de volle breedte minus padding */
+                padding: 10px; /* Padding binnen de input */
+                border: 1px solid #ddd; /* Voeg een rand toe aan de input zelf */
+                border-radius: 5px; /* Afgeronde hoeken */
+                margin-left: 10px; /* Plaats de input iets naar rechts */
             }
             .search-button {
-                width: calc(100% - 20px);
-                padding: 15px;
-                margin: 20px 10px 0 10px; /* Margins op mobiel */
+                width: calc(100% - 20px); /* Volle breedte met padding */
+                margin: 20px 10px 0 10px; /* Marges op mobiel */
             }
+
+            /* Features sectie op mobiel */
             .features-section {
                 padding-top: 40px;
-                gap: 30px;
+                padding-bottom: 40px;
+                gap: 20px; /* Kleinere kloof tussen items */
             }
             .feature-item {
-                flex: 0 0 160px;
+                flex: 0 0 calc(50% - 30px); /* Twee items per rij, met wat ruimte ertussen */
+                max-width: 180px; /* Maximale breedte voor items */
                 padding: 20px 10px;
             }
-            main {
+
+            /* Resultaat sectie op mobiel */
+            #results {
+                grid-template-columns: 1fr; /* Eén kolom op mobiel */
+                gap: 15px; /* Kleinere kloof */
+            }
+            .result-item {
                 padding: 15px;
             }
-            .styled-table {
-                font-size: 0.85em;
-            }
-            .styled-table th, .styled-table td {
-                padding: 8px 10px;
+
+            /* Info sectie op mobiel */
+            #info-section {
+                padding: 20px;
             }
             #info-section summary {
-                font-size: 1.4em;
+                font-size: 1.5em;
             }
             #info-section h3 {
-                font-size: 1.3em;
+                font-size: 1.2em;
+            }
+            #info-section p {
+                font-size: 0.95em;
+            }
+
+            /* Tabellen in info sectie op mobiel */
+            .styled-table {
+                font-size: 0.8em; /* Kleinere lettertype voor tabellen */
+            }
+            .styled-table th, .styled-table td {
+                padding: 8px; /* Minder padding in tabellen */
             }
         }
-	    @media (max-width: 768px) {
-  .topnav {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .tab-button {
-    font-size: 1em;
-    width: 100%;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-  }
-
-  .tab-content {
-    width: 90%;
-    left: 5%;
-    transform: none;
-    top: 80px;
-    font-size: 1em;
-    padding: 20px;
-  }
-}
-.white-topbar {
-    height: 20px;
-    background-color: white;
-  }
-
-  .hero-wrapper {
-    position: relative;
-    z-index: 5;
-  }
-
-  .hero-section {
-    background-size: cover;
-    background-position: center;
-    padding: 60px 15px 120px;
-    text-align: center;
-    position: relative;
-  }
-
-  .logo-tag {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    width: 30%;
-    z-index: 999;
-  }
-
-  .hero-text h1 {
-    font-size: 1.5em;
-  }
-
-  .hero-text p {
-    font-size: 1em;
-  }
-
-  .tab-content {
-    margin-top: 10px;
-    width: 95%;
-    left: 2.5%;
-    top: 70px;
-    padding: 15px;
-  }
-}
-@media (max-width: 768px) {
-  .label-logo {
-    position: relative;
-    top: 10px;
-    left: 10px;
-    width: 120px;
-    margin-bottom: 10px;
-  }
-
-  .hero-wrapper {
-    order: 1;
-  }
-
-  .topnav {
-    order: 2;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    padding-top: 10px;
-    border-top: 1px solid #ccc;
-  }
-
-  .tab-button {
-    width: 100%;
-    text-align: center;
-    font-size: 1em;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-  }
-
-  .tab-content {
-    width: 90%;
-    left: 5%;
-    transform: none;
-    top: 20px;
-    margin-top: 10px;
-    z-index: 9999;
-  }
-
-  .features-section {
-    margin-top: 20px;
-  }
-
-  .result-section {
-    margin-top: 20px;
-  }
-}
     </style>
 </head>
 <body>
+    <div class="topbar"></div>
+    <img src="Afbeelding 2 webiste.png.png" alt="VamosVerde label" class="label-logo" />
 
+    <div class="topnav">
+        <button class="tab-button" onclick="openTab('uitleg1', this)">Hoe werkt het?</button>
+        <button class="tab-button" onclick="openTab('uitleg2', this)">Wat is ons doel?</button>
+        <button class="tab-button" onclick="openTab('uitleg3', this)">Wat betekent VamosVerde?</button>
+    </div>
 
-<div id="uitleg1" class="tab-content">
-  <p>
-    Als je een stad invult bij <strong>‘Van’</strong>, bedoelen we meestal de plaats waar je woont of vertrekt. 
-    Bij <strong>‘Naar’</strong> vul je je reisbestemming in – bijvoorbeeld een vakantiebestemming of een stad waar je naartoe wilt.
-  </p>
-  <p>
-    Zodra je op <strong>"Bereken"</strong> klikt, vergelijkt VamosVerde automatisch verschillende vervoersopties (zoals trein, vliegtuig en auto) op basis van:
-  </p>
-  <ul>
-    <li>De afstand tussen de steden</li>
-    <li>De verwachte CO₂-uitstoot</li>
-    <li>De gemiddelde reiskosten</li>
-    <li>De reistijd</li>
-  </ul>
-  <p>
-    Zo zie je in één oogopslag wat de <strong>meest milieubewuste</strong>, <strong>goedkoopste</strong> of <strong>snelste</strong> manier van reizen is.  
-    Jij bepaalt wat voor jou het belangrijkst is – wij zorgen voor de inzichten.
-  </p>
-</div>
-<div id="uitleg2" class="tab-content">
-  <p>
-    Ons doel is om reizigers bewuster te maken van de impact van hun vervoerskeuze.
-    Veel mensen weten niet hoeveel verschil het maakt of je de trein neemt in plaats van het vliegtuig, of wat de echte kosten zijn van autorijden.
-  </p>
-  <p>
-    Met VaiVerde willen we die informatie <strong>in één overzicht</strong> beschikbaar maken. Niet met ingewikkelde rapporten of cijfers, 
-    maar met een simpele vergelijking van CO₂-uitstoot, kosten en reistijd.
-  </p>
-  <p>
-    Zo kun jij een keuze maken die past bij wat jij belangrijk vindt: 
-    <strong>het milieu sparen, geld besparen of gewoon snel aankomen</strong>.
-  </p>
-  <p>
-    Uiteindelijk willen we bijdragen aan een duurzamere wereld door het makkelijker te maken om groenere keuzes te maken, zonder dat het ingewikkeld wordt.
-  </p>
-</div>
-<div id="uitleg3" class="tab-content">
-  <p>
-    <strong>VamosVerde</strong> betekent letterlijk: “Laten we groen gaan”. Het is een oproep om bewuster te reizen — niet alleen voor jezelf, maar ook voor de wereld om je heen.
-  </p>
-  <p>
-    We willen mensen inspireren om keuzes te maken die passen bij een duurzamere toekomst. Door te laten zien wat het effect is van jouw vervoer op het klimaat, maken we het makkelijker om te kiezen voor minder uitstoot en meer bewustzijn.
-  </p>
-  <p>
-    <strong>VamosVerde</strong> is dus meer dan een naam: het is een beweging richting slimme, betaalbare en milieuvriendelijke mobiliteit.
-  </p>
-</div>
-<img
-  src="Afbeelding 2 webiste.png.png"
-  alt="VamosVerde label"
-  class="label-logo"
-/>
-<div class="topnav">
-  <button class="tab-button" onclick="openTab('uitleg1', this)">Hoe werkt het?</button>
-  <button class="tab-button" onclick="openTab('uitleg2', this)">Wat is ons doel?</button>
-  <button class="tab-button" onclick="openTab('uitleg3', this)">Wat betekent VamosVerde?</button>
-</div>
-<div class="topbar"></div>
+    <div id="uitleg1" class="tab-content">
+        <p>
+            Als je een stad invult bij <strong>‘Van’</strong>, bedoelen we meestal de plaats waar je woont of vertrekt.
+            Bij <strong>‘Naar’</strong> vul je je reisbestemming in – bijvoorbeeld een vakantiebestemming of een stad waar je naartoe wilt.
+        </p>
+        <p>
+            Zodra je op <strong>"Bereken"</strong> klikt, vergelijkt VamosVerde automatisch verschillende vervoersopties (zoals trein, vliegtuig en auto) op basis van:
+        </p>
+        <ul>
+            <li>De afstand tussen de steden</li>
+            <li>De verwachte CO₂-uitstoot</li>
+            <li>De gemiddelde reiskosten</li>
+            <li>De reistijd</li>
+        </ul>
+        <p>
+            Zo zie je in één oogopslag wat de <strong>meest milieubewuste</strong>, <strong>goedkoopste</strong> of <strong>snelste</strong> manier van reizen is.
+            Jij bepaalt wat voor jou het belangrijkst is – wij zorgen voor de inzichten.
+        </p>
+    </div>
+    <div id="uitleg2" class="tab-content">
+        <p>
+            Ons doel is om reizigers bewuster te maken van de impact van hun vervoerskeuze.
+            Veel mensen weten niet hoeveel verschil het maakt of je de trein neemt in plaats van het vliegtuig, of wat de echte kosten zijn van autorijden.
+        </p>
+        <p>
+            Met VaiVerde willen we die informatie <strong>in één overzicht</strong> beschikbaar maken. Niet met ingewikkelde rapporten of cijfers,
+            maar met een simpele vergelijking van CO₂-uitstoot, kosten en reistijd.
+        </p>
+        <p>
+            Zo kun jij een keuze maken die past bij wat jij belangrijk vindt:
+            <strong>het milieu sparen, geld besparen of gewoon snel aankomen</strong>.
+        </p>
+        <p>
+            Uiteindelijk willen we bijdragen aan een duurzamere wereld door het makkelijker te maken om groenere keuzes te maken, zonder dat het ingewikkeld wordt.
+        </p>
+    </div>
+    <div id="uitleg3" class="tab-content">
+        <p>
+            <strong>VamosVerde</strong> betekent letterlijk: “Laten we groen gaan”. Het is een oproep om bewuster te reizen — niet alleen voor jezelf, maar ook voor de wereld om je heen.
+        </p>
+        <p>
+            We willen mensen inspireren om keuzes te maken die passen bij een duurzamere toekomst. Door te laten zien wat het effect is van jouw vervoer op het klimaat, maken we het makkelijker om te kiezen voor minder uitstoot en meer bewustzijn.
+        </p>
+        <p>
+            <strong>VamosVerde</strong> is dus meer dan een naam: het is een beweging richting slimme, betaalbare en milieuvriendelijke mobiliteit.
+        </p>
+    </div>
 
-    
-        </div>
-        </header>
-<div class="hero-wrapper">
     <section class="hero-section">
         <div class="hero-content">
             <h1>Zo milieuvriendelijk mogelijk reizen?</h1>
@@ -783,12 +698,11 @@
                 <label for="persons">Aantal personen</label>
                 <input type="number" id="persons" value="1" min="1">
             </div>
-          <button class="search-button" onclick="startCalculation(); scrollToResults();">Bereken</button>
-
+            <button class="search-button" onclick="startCalculation()">Bereken</button>
         </div>
         <datalist id="cities"></datalist>
     </section>
-</div>
+
     <section class="features-section">
         <div class="feature-item">
             <i class="fas fa-users"></i>
@@ -814,7 +728,7 @@
         </div>
     </section>
 
-    <main id="result-section">
+    <main>
         <div id="spinner">⏳ Wij zoeken naar de groenste optie voor u...</div>
 
         <div class="result-section">
@@ -1023,41 +937,34 @@
             }
         });
     </script>
-<script>
-  function openTab(id, button) {
-    // Sluit alle tabblokken
-    document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
-    // Verwijder 'active' van alle knoppen
-    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    <script>
+        function openTab(id, button) {
+            // Sluit alle tabblokken
+            document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
+            // Verwijder 'active' van alle knoppen
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
 
-    // Toon de geselecteerde uitleg
-    const content = document.getElementById(id);
-    content.style.display = 'block';
-    button.classList.add('active');
+            // Toon de geselecteerde uitleg
+            const content = document.getElementById(id);
+            content.style.display = 'block';
+            button.classList.add('active');
 
-    // Sla het actieve blok op voor sluiting bij buitenklikken
-    window.activeTab = content;
-  }
+            // Sla het actieve blok op voor sluiting bij buitenklikken
+            window.activeTab = content;
+        }
 
-  // Klik buiten het uitlegvak? Sluit het
-  document.addEventListener('click', function (e) {
-    if (
-      window.activeTab &&                        // er is een open blok
-      !window.activeTab.contains(e.target) &&    // klik was niet ín het blok
-      !e.target.classList.contains('tab-button') // klik was niet op de knop
-    ) {
-      window.activeTab.style.display = 'none';
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-      window.activeTab = null;
-    }
-  });
-</script>
-<script>
-  function scrollToResults() {
-    if (window.innerWidth <= 768) {
-      document.getElementById("result-section").scrollIntoView({ behavior: "smooth" });
-    }
-  }
-</script>
+        // Klik buiten het uitlegvak? Sluit het
+        document.addEventListener('click', function (e) {
+            if (
+                window.activeTab &&
+                !window.activeTab.contains(e.target) &&
+                !e.target.classList.contains('tab-button')
+            ) {
+                window.activeTab.style.display = 'none';
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                window.activeTab = null;
+            }
+        });
+    </script>
 </body>
 </html>
